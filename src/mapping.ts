@@ -16,9 +16,9 @@ export function handleDeposit(event: Deposit): void {
     allTransactions.count = BigInt.fromI32(0)
   }
   allTransactions.count = allTransactions.count.plus(BigInt.fromI32(1))
-  let depositTransactions = TransactionCount.load("deposit")
+  let depositTransactions = TransactionCount.load("DEPOSIT")
   if (depositTransactions == null) {
-    depositTransactions = new TransactionCount("deposit")
+    depositTransactions = new TransactionCount("DEPOSIT")
     depositTransactions.count = BigInt.fromI32(0)
   }
   depositTransactions.count = depositTransactions.count.plus(BigInt.fromI32(1))
@@ -43,9 +43,9 @@ export function handleWithdraw(event: Withdraw): void {
     allTransactions.count = BigInt.fromI32(0)
   }
   allTransactions.count = allTransactions.count.plus(BigInt.fromI32(1))
-  let withdrawTransactions = TransactionCount.load("withdraw")
+  let withdrawTransactions = TransactionCount.load("WITHDRAW")
   if (withdrawTransactions == null) {
-    withdrawTransactions = new TransactionCount("withdraw");
+    withdrawTransactions = new TransactionCount("WITHDRAW");
     withdrawTransactions.count = BigInt.fromI32(0)
   }
   withdrawTransactions.count = withdrawTransactions.count.plus(BigInt.fromI32(1))
