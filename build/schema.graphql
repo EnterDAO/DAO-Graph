@@ -1,14 +1,19 @@
 enum TransactionType {
-  Deposit
-  Withdraw
-  Harvest
+  DEPOSIT
+  WITHDRAW
 }
 
 type Transaction @entity {
   id: ID!
-  farmingContract: Bytes!
-  type: TransactionType!
-  user: Bytes!
+  tokenAddress: Bytes!
+  actionType: TransactionType!
+  userAddress: Bytes!
   amount: BigInt!
-  txHash: String!
+  blockTimestamp: BigInt!
+  transactionHash: String!
+}
+
+type TransactionCount @entity {
+  id: ID!
+  count: BigInt!
 }

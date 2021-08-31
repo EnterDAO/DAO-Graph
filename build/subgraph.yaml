@@ -1,6 +1,6 @@
 specVersion: 0.0.2
 description: Graph for Staking contract of the Yield Farming
-repository: https://github.com/enterdao/YieldFarming-Graph
+repository: https://github.com/enterdao/DAO-Graph
 schema:
   file: schema.graphql
 dataSources:
@@ -17,6 +17,7 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Transaction
+        - TransactionCount
       abis:
         - name: Staking
           file: Staking/abis/Staking.json

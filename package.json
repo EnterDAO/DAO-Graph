@@ -1,13 +1,13 @@
 {
-  "name": "YieldFarmingGraph",
+  "name": "DAOGraph",
   "version": "0.1.0",
   "scripts": {
-    "create": "graph create enterdao/YieldFarmingGraph --node https://api.thegraph.com/deploy/",
-    "create-local": "graph create enterdao/YieldFarmingGraph --node http://127.0.0.1:8020",
+    "create": "graph create enterdao/DAOGraph --node http://34.118.119.85:8020",
+    "create-local": "graph create enterdao/DAOGraph --node http://127.0.0.1:8020",
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy enterdao/YieldFarmingGraph --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
-    "deploy-local": "graph deploy enterdao/YieldFarmingGraph --ipfs http://localhost:5001 --node http://127.0.0.1:8020"
+    "deploy": "graph deploy enterdao/DAOGraph --ipfs http://34.118.119.85:5001 --node http://34.118.119.85:8020",
+    "deploy-local": "graph deploy enterdao/DAOGraph --ipfs http://localhost:5001 --node http://127.0.0.1:8020"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.20.1",

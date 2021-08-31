@@ -42,31 +42,31 @@ export class Transaction extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get farmingContract(): Bytes {
-    let value = this.get("farmingContract");
+  get tokenAddress(): Bytes {
+    let value = this.get("tokenAddress");
     return value.toBytes();
   }
 
-  set farmingContract(value: Bytes) {
-    this.set("farmingContract", Value.fromBytes(value));
+  set tokenAddress(value: Bytes) {
+    this.set("tokenAddress", Value.fromBytes(value));
   }
 
-  get type(): string {
-    let value = this.get("type");
+  get actionType(): string {
+    let value = this.get("actionType");
     return value.toString();
   }
 
-  set type(value: string) {
-    this.set("type", Value.fromString(value));
+  set actionType(value: string) {
+    this.set("actionType", Value.fromString(value));
   }
 
-  get user(): Bytes {
-    let value = this.get("user");
+  get userAddress(): Bytes {
+    let value = this.get("userAddress");
     return value.toBytes();
   }
 
-  set user(value: Bytes) {
-    this.set("user", Value.fromBytes(value));
+  set userAddress(value: Bytes) {
+    this.set("userAddress", Value.fromBytes(value));
   }
 
   get amount(): BigInt {
@@ -78,12 +78,61 @@ export class Transaction extends Entity {
     this.set("amount", Value.fromBigInt(value));
   }
 
-  get txHash(): string {
-    let value = this.get("txHash");
+  get blockTimestamp(): BigInt {
+    let value = this.get("blockTimestamp");
+    return value.toBigInt();
+  }
+
+  set blockTimestamp(value: BigInt) {
+    this.set("blockTimestamp", Value.fromBigInt(value));
+  }
+
+  get transactionHash(): string {
+    let value = this.get("transactionHash");
     return value.toString();
   }
 
-  set txHash(value: string) {
-    this.set("txHash", Value.fromString(value));
+  set transactionHash(value: string) {
+    this.set("transactionHash", Value.fromString(value));
+  }
+}
+
+export class TransactionCount extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save TransactionCount entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save TransactionCount entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("TransactionCount", id.toString(), this);
+  }
+
+  static load(id: string): TransactionCount | null {
+    return store.get("TransactionCount", id) as TransactionCount | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get count(): BigInt {
+    let value = this.get("count");
+    return value.toBigInt();
+  }
+
+  set count(value: BigInt) {
+    this.set("count", Value.fromBigInt(value));
   }
 }
