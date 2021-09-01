@@ -1,5 +1,5 @@
-import { Deposit, Withdraw } from '../generated/Staking/Staking'
-import { Transaction, TransactionCount } from '../generated/schema'
+import { Deposit, Withdraw } from '../../generated/Staking/Staking'
+import { Transaction, TransactionCount } from '../../generated/schema'
 import { BigInt } from '@graphprotocol/graph-ts'
 
 export function handleDeposit(event: Deposit): void {

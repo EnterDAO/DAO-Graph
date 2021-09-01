@@ -26,4 +26,4 @@ dataSources:
           handler: handleDeposit
         - event: Withdraw(indexed address,indexed address,uint256)
           handler: handleWithdraw
-      file: ./src/mapping.ts
+      file: ./src/staking/mapping.ts

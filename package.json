@@ -1,5 +1,5 @@
 {
-  "name": "DAOGraph",
+  "name": "dao-graph",
   "version": "0.1.0",
   "scripts": {
     "create": "graph create enterdao/DAOGraph --node http://34.118.119.85:8020",
@@ -14,10 +14,5 @@
     "@graphprotocol/graph-ts": "^0.20.0"
   },
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
-    "babel-register": "^6.26.0",
-    "truffle": "^5.0.4",
-    "truffle-contract": "^4.0.5",
-    "truffle-hdwallet-provider": "^1.0.4"
   }
 }

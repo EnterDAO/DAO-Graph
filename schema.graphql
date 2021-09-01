@@ -17,3 +17,87 @@ type TransactionCount @entity {
   id: ID!
   count: BigInt!
 }
+
+# --- Start of DAO/Governance Entities --- #
+
+# Proposal Entity created once ProposalCreated event is fired
+# The event provides only the ID of the proposal, so in order for the data to be populated a Contract call must be executed to load and populate the proposal info
+type Proposal @entity {
+  "The ID of the proposal"
+  id: ID!
+  proposer: Bytes!
+  description: String!
+  title: String!
+  "The block timestamp -1 at which the proposal was created"
+  createTime: BigInt!
+  targets: [Bytes!]!
+  values: [BigInt!]!
+  signatures: [String!]!
+  calldatas: [Bytes!]!
+  " The block timestamp when the proposal was created. Should be createTime + 1"
+  blockTimestamp: BigInt!
+  warmUpDuration: BigInt!
+  activeDuration: BigInt!
+  queueDuration: BigInt!
+  gracePeriodDuration: BigInt!
+  acceptanceThreshold: BigInt!
+  minQuorum: BigInt!
+  state: ProposalState!
+  # TODO stateTimeLeft?
+  "Should be accounted in BigInt, but saved as String due to how the UI expects it"
+  forVotes: String!
+  "Should be accounted in BigInt, but saved as String due to how the UI expects"
+  againstVotes: String!
+  history: [ProposalStateHistory!]!
+}
+
+# The entity is created each time a proposal changes status.
+# Timestamps may not be entirely accurate as for performance reasons we only compute the state of proposal every XX blocks
+type ProposalStateHistory @entity {
+  "Id is generated: {proposalID}-{proposal.state}-{blockNumber}"
+  id: ID!
+  "The proposal this status change is linked to"
+  proposal: Proposal!
+  "The name of the state"
+  name: ProposalState!
+  "The timestamp at which this state has started"
+  startTimestamp: BigInt!
+  "The timestamp at which this state ended. Terminal states such as CANCELED, FAILED, EXPIRED, EXECUTED  and ABROGATED have value 0"
+  endTimestamp: BigInt!
+  "The transaction hash at which the change of the status ocurred. Populated only on EXECUTED, QUEUED, ABROGATED and CANCELLED"
+  txHash: String!
+}
+
+# An Enum list matching the proposal states from the Governance contract
+enum ProposalState {
+  WARMUP,
+  ACTIVE,
+  CANCELED,
+  FAILED,
+  ACCEPTED,
+  QUEUED,
+  GRACE,
+  EXPIRED,
+  EXECUTED,
+  ABROGATED
+}
+
+# Voter entity used to represent addresses that have interacted with the Governance/DAO system
+type Voter @entity {
+  "The ethereum address of a voter"
+  id: ID! # !Not compatible with the UI. UI must be updated from `address` to `id`
+  "Number of tokens staked"
+  tokensStaked: String! # !Not compatible with the UI. UI must be updated from `kekStaked` to `tokensStaked`
+  "The timestamp until the voter has locked his tokens"
+  lockedUntil: BigInt!
+  "The amount of delegating power the voter has"
+  delegatedPower: String!
+  "Number of times the voter voted"
+  votes: BigInt!
+  "Number of proposals created by this address"
+  proposals: BigInt!
+  "The voting power of the address"
+  votingPower: String!
+  "Whether or not the address delegated "
+  hasActiveDelegation: Boolean!
+}
