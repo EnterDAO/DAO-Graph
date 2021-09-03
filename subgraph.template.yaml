@@ -8,9 +8,9 @@ dataSources:
     name: Staking
     network: mainnet
     source:
-      address: '0x2d615795a8bdb804541C69798F13331126BA0c09'
+      address: '{{Staking}}'
       abi: Staking
-      startBlock: 12503000
+      startBlock: {{startBlock}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4

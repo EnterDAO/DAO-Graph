@@ -2,17 +2,13 @@
   "name": "dao-graph",
   "version": "0.1.0",
   "scripts": {
-    "create": "graph create enterdao/DAOGraph --node http://34.118.119.85:8020",
-    "create-local": "graph create enterdao/DAOGraph --node http://127.0.0.1:8020",
-    "codegen": "graph codegen",
-    "build": "graph build",
-    "deploy": "graph deploy enterdao/DAOGraph --ipfs http://34.118.119.85:5001 --node http://34.118.119.85:8020",
-    "deploy-local": "graph deploy enterdao/DAOGraph --ipfs http://localhost:5001 --node http://127.0.0.1:8020"
+    "build": "NETWORK=local NO_DEPLOY=true ./deploy.sh",
+    "deploy:mainnet": "NETWORK=mainnet ./deploy.sh",
+    "deploy:local": "NETWORK=local ./deploy.sh"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.20.1",
-    "@graphprotocol/graph-ts": "^0.20.0"
-  },
-  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.21.1",
+    "@graphprotocol/graph-ts": "^0.20.1",
+    "mustache": "^4.2.0"
   }
 }
