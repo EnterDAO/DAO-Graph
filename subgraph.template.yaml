@@ -6,7 +6,7 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Staking
-    network: mainnet
+    network: {{network}}
     source:
       address: '{{Staking}}'
       abi: Staking
@@ -27,3 +27,26 @@ dataSources:
         - event: Withdraw(indexed address,indexed address,uint256)
           handler: handleWithdraw
       file: ./src/staking/mapping.ts
+
+  - kind: ethereum/contract
+    name: Governance
+    network: {{network}}
+    source:
+      address: '{{Governance}}'
+      abi: Governance
+      startBlock: {{startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Proposal
+      abis:
+        - name: Governance
+          file: ./abis/Governance.json
+      eventHandlers:
+        - event: ProposalCreated(indexed uint256)
+          handler: handleProposalCreated
+        - event: Vote(indexed uint256,indexed address,bool,uint256)
+          handler: handleVote
+      file: ./src/governance/mapping.ts

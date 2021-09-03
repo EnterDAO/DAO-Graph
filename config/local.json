@@ -2,6 +2,7 @@
 {
   "network": "mainnet",
   "description": "EnterDAO DAO Graph (local)",
-  "startBlock": 12503000,
-  "Staking": "0x2d615795a8bdb804541C69798F13331126BA0c09"
+  "startBlock": 12967220,
+  "Staking": "0x2d615795a8bdb804541C69798F13331126BA0c09",
+  "Governance": "0xa8047C2a86D5A188B0e15C3C10E2bc144cB272C2"
 }
