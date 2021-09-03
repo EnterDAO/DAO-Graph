@@ -10,7 +10,6 @@ Open the `docker-compose.yml` file and edit the `ethereum` node url you want to 
 
 There are `npm scripts` for all of the stages of subgraph development.
 
-1. Generating the Code: `npm run codegen`
-2. Building the subgraph: `npm run build`
-3. Creating the subgraph at the local graph node: `npm run create-local`
-4. Deploying the subgraph on the local graph node: `npm run deploy-local`
+1. Building the subgraph (code generation + creating the subgraph): `yarn build`
+2. Deploying the mainnet subgraph on the local graph node: `yarn deploy:local`
+3. Deploying the mainnet subgraph on the public graph node: `yarn deploy:mainnet`
