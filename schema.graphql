@@ -44,10 +44,11 @@ type Proposal @entity {
   minQuorum: BigInt!
   state: ProposalState!
   # TODO stateTimeLeft?
+  eta: BigInt!
   "Should be accounted in BigInt, but saved as String due to how the UI expects it"
-  forVotes: String!
+  forVotes: BigInt!
   "Should be accounted in BigInt, but saved as String due to how the UI expects"
-  againstVotes: String!
+  againstVotes: BigInt!
   history: [ProposalStateHistory!]!
 }
 
