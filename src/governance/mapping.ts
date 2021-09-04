@@ -1,4 +1,4 @@
-import { BigInt, Bytes, TypedMap } from '@graphprotocol/graph-ts'
+import { log, BigInt, Bytes, TypedMap } from '@graphprotocol/graph-ts'
 import {
   Governance,
   ProposalCreated,
@@ -26,6 +26,42 @@ PROPOSAL_STATE_ENUM.set(7, 'EXPIRED')
 PROPOSAL_STATE_ENUM.set(8, 'EXECUTED')
 PROPOSAL_STATE_ENUM.set(9, 'ABROGATED')
 
+function saveProposalStateHistory(
+  proposalId: string, proposalState: string, startTimestamp: BigInt, endTimestamp: BigInt, txHash: string
+): void {
+  let id = proposalId + '-' + proposalState
+  let psh = ProposalStateHistory.load(id)
+  if (psh == null) psh = new ProposalStateHistory(id)
+  psh.proposal = proposalId
+  psh.name = proposalState
+  psh.startTimestamp = startTimestamp
+  psh.endTimestamp = endTimestamp
+  psh.txHash = txHash
+  psh.save()
+
+  // add to proposal state history array
+  let proposal = Proposal.load(proposalId)
+  if (proposal == null) return
+  let history = proposal.history
+  // sanity check for duplicates (updates)
+  for (let i = 0; i < history.length; i++) { if (history[i] === psh.id) return }
+  history.push(psh.id)
+  proposal.history = history
+  proposal.save()
+
+  // set endTimestamp of previous proposal state if its unset or greater than current psh startTimestamp
+  if (history.length < 2) return
+  // can't make assumptions about order of history array
+  for (let i = 0; i < history.length; i++) {
+    let prevPSH = ProposalStateHistory.load(history[i])
+    if (prevPSH == null) continue
+    if (prevPSH.id == psh.id) continue
+    if (!prevPSH.endTimestamp.equals(BigInt.fromI32(0)) && prevPSH.endTimestamp.lt(startTimestamp)) continue
+    prevPSH.endTimestamp = startTimestamp
+    prevPSH.save()
+  }
+}
+
 export function handleProposalCreated(event: ProposalCreated): void {
   let proposal = new Proposal(event.params.proposalId.toString())
   let govContract = Governance.bind(event.address)  
@@ -38,10 +74,10 @@ export function handleProposalCreated(event: ProposalCreated): void {
   proposal.description = proposalData.value2
   proposal.title = proposalData.value3
   proposal.createTime = proposalData.value4
-  proposal.eta = proposalData.value5
-  proposal.forVotes = proposalData.value6
-  proposal.againstVotes = proposalData.value7
-  proposal.blockTimestamp = event.block.timestamp
+  proposal.eta = proposalData.value5 // 0
+  proposal.forVotes = proposalData.value6 // 0
+  proposal.againstVotes = proposalData.value7 // 0
+  proposal.blockTimestamp = event.block.timestamp // ?
   proposal.state = proposalState as string
   proposal.history = []
   // proposal params
@@ -58,20 +94,14 @@ export function handleProposalCreated(event: ProposalCreated): void {
   proposal.calldatas = proposalActions.value3
   proposal.save()
 
-  let proposalStateHistory = new ProposalStateHistory(
-    event.params.proposalId.toHex() + '-' + proposalState.toString() + '-' + event.block.number.toString()
+  // --> WARMUP
+  saveProposalStateHistory(
+    proposal.id,
+    proposalState.toString(),
+    proposal.createTime,
+    proposal.createTime.plus(proposal.warmUpDuration),
+    ''
   )
-  proposalStateHistory.proposal = proposal.id
-  proposalStateHistory.name = "WARMUP"
-  proposalStateHistory.startTimestamp = proposal.createTime
-  proposalStateHistory.endTimestamp = proposal.createTime.plus(proposal.warmUpDuration).plus(proposal.activeDuration)
-  proposalStateHistory.txHash = '';
-  proposalStateHistory.save();
-
-  let history = proposal.history;
-  history.push(proposalStateHistory.id);
-  proposal.history = history;
-  proposal.save()
 }
 
 export function handleVote(event: Vote): void {
@@ -84,55 +114,108 @@ export function handleVote(event: Vote): void {
   proposal.againstVotes = proposalData.value7
   proposal.state = proposalState as string
   proposal.save()
+
+  // WARMUP --> ACTIVE
+  saveProposalStateHistory(
+    proposal.id,
+    proposalState.toString(),
+    proposal.createTime.plus(proposal.warmUpDuration),
+    proposal.createTime.plus(proposal.warmUpDuration).plus(proposal.activeDuration),
+    ''
+  )
 }
 
-// export function handleVoteCanceled(event: VoteCanceled): void {
-//   let proposal = Proposal.load(event.params.proposalId.toString())
-//   let govContract = Governance.bind(event.address)  
-//   let proposalState = PROPOSAL_STATE_ENUM.get(govContract.state(event.params.proposalId))
+export function handleVoteCanceled(event: VoteCanceled): void {
+  let proposal = Proposal.load(event.params.proposalId.toString())
+  let govContract = Governance.bind(event.address)  
+  let proposalState = PROPOSAL_STATE_ENUM.get(govContract.state(event.params.proposalId))
 
-//   proposal.state = proposalState as string
-//   proposal.save()
-// }
+  proposal.state = proposalState as string
+  proposal.save()
 
-// export function handleProposalQueued(event: ProposalQueued): void {
-//   let proposal = Proposal.load(event.params.proposalId.toString())
-//   let govContract = Governance.bind(event.address)  
-//   let proposalState = PROPOSAL_STATE_ENUM.get(govContract.state(event.params.proposalId))
+  // ACTIVE --> CANCELED
+  saveProposalStateHistory(
+    proposal.id, proposalState.toString(), event.block.timestamp, BigInt.fromI32(0), event.transaction.hash.toHex()
+  )
+}
 
-//   proposal.state = proposalState as string
-//   proposal.save()
-// }
+export function handleProposalQueued(event: ProposalQueued): void {
+  let proposal = Proposal.load(event.params.proposalId.toString())
+  let govContract = Governance.bind(event.address)
+  let proposalData = govContract.proposals(event.params.proposalId)
+  let proposalState = PROPOSAL_STATE_ENUM.get(govContract.state(event.params.proposalId))
 
-// export function handleProposalExecuted(event: ProposalExecuted): void {
-//   let proposal = Proposal.load(event.params.proposalId.toString())
-//   let govContract = Governance.bind(event.address)  
-//   let proposalState = PROPOSAL_STATE_ENUM.get(govContract.state(event.params.proposalId))
+  proposal.eta = proposalData.value5
+  proposal.state = proposalState as string
+  proposal.save()
 
-//   proposal.state = proposalState as string
-//   proposal.save()
-// }
+  // ACTIVE --> QUEUED
+  saveProposalStateHistory(
+    proposal.id, proposalState.toString(), event.block.timestamp, proposal.eta, event.transaction.hash.toHex()
+  )
+}
 
-// export function handleProposalCanceled(event: ProposalCanceled): void {
-//   let proposal = Proposal.load(event.params.proposalId.toString())
-//   let govContract = Governance.bind(event.address)  
-//   let proposalState = PROPOSAL_STATE_ENUM.get(govContract.state(event.params.proposalId))
+export function handleProposalExecuted(event: ProposalExecuted): void {
+  let proposal = Proposal.load(event.params.proposalId.toString())
+  let govContract = Governance.bind(event.address)  
+  let proposalState = PROPOSAL_STATE_ENUM.get(govContract.state(event.params.proposalId))
 
-//   proposal.state = proposalState as string
-//   proposal.save()
-// }
+  proposal.state = proposalState as string
+  proposal.save()
 
-// export function handleAbrogationProposalStarted(event: AbrogationProposalStarted): void {
-//   let proposal = Proposal.load(event.params.proposalId.toString())
-//   let govContract = Governance.bind(event.address)  
-//   let proposalState = PROPOSAL_STATE_ENUM.get(govContract.state(event.params.proposalId))
+  // QUEUED --> EXECUTED
+  saveProposalStateHistory(
+    proposal.id, proposalState.toString(), event.block.timestamp, BigInt.fromI32(0), event.transaction.hash.toHex()
+  )
+}
 
-//   proposal.state = proposalState as string
-//   proposal.save()
-// }
+export function handleProposalCanceled(event: ProposalCanceled): void {
+  let proposal = Proposal.load(event.params.proposalId.toString())
+  let govContract = Governance.bind(event.address)  
+  let proposalState = PROPOSAL_STATE_ENUM.get(govContract.state(event.params.proposalId))
 
-// export function handleAbrogationProposalExecuted(event: AbrogationProposalExecuted): void {}
+  proposal.state = proposalState as string
+  proposal.save()
 
-// export function handleAbrogationProposalVote(event: AbrogationProposalVote): void {}
+  // QUEUED --> CANCELED
+  saveProposalStateHistory(
+    proposal.id, proposalState.toString(), event.block.timestamp, BigInt.fromI32(0), event.transaction.hash.toHex()
+  )
+}
 
-// export function handleAbrogationProposalVoteCancelled(event: AbrogationProposalVoteCancelled): void {}
+export function handleAbrogationProposalStarted(event: AbrogationProposalStarted): void {
+  let proposal = Proposal.load(event.params.proposalId.toString())
+  let govContract = Governance.bind(event.address)  
+  let proposalState = PROPOSAL_STATE_ENUM.get(govContract.state(event.params.proposalId))
+
+  proposal.state = proposalState as string
+  proposal.save()
+
+  // QUEUED --> ABROGATED
+  saveProposalStateHistory(
+    proposal.id, proposalState.toString(), event.block.timestamp, BigInt.fromI32(0), event.transaction.hash.toHex()
+  )
+}
+
+export function handleAbrogationProposalExecuted(event: AbrogationProposalExecuted): void {
+  let proposal = Proposal.load(event.params.proposalId.toString())
+  let govContract = Governance.bind(event.address)  
+  let proposalState = PROPOSAL_STATE_ENUM.get(govContract.state(event.params.proposalId))
+
+  proposal.state = proposalState as string
+  proposal.save()
+
+  // ABROGATED --> CANCELED
+  saveProposalStateHistory(
+    proposal.id, proposalState.toString(), event.block.timestamp, BigInt.fromI32(0), event.transaction.hash.toHex()
+  )
+}
+
+export function handleAbrogationProposalVote(event: AbrogationProposalVote): void {
+
+}
+
+export function handleAbrogationProposalVoteCancelled(event: AbrogationProposalVoteCancelled): void {
+
+}
+

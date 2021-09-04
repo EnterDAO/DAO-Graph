@@ -49,4 +49,20 @@ dataSources:
           handler: handleProposalCreated
         - event: Vote(indexed uint256,indexed address,bool,uint256)
           handler: handleVote
+        - event: VoteCanceled(indexed uint256,indexed address)
+          handler: handleVoteCanceled
+        - event: ProposalQueued(indexed uint256,address,uint256)
+          handler: handleProposalQueued
+        - event: ProposalExecuted(indexed uint256,address)
+          handler: handleProposalCanceled
+        - event: ProposalCanceled(indexed uint256,address)
+          handler: handleProposalCanceled
+        - event: AbrogationProposalStarted(indexed uint256,address)
+          handler: handleAbrogationProposalStarted
+        - event: AbrogationProposalExecuted(indexed uint256,address)
+          handler: handleAbrogationProposalExecuted
+        - event: AbrogationProposalVote(indexed uint256,indexed address,bool,uint256)
+          handler: handleAbrogationProposalVote
+        - event: AbrogationProposalVoteCancelled(indexed uint256,indexed address)
+          handler: handleAbrogationProposalVoteCancelled
       file: ./src/governance/mapping.ts
