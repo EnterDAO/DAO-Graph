@@ -1,8 +1,6 @@
 import { BigInt, Bytes } from '@graphprotocol/graph-ts'
-import { Staking, Deposit, Withdraw } from '../../generated/Staking/Staking'
+import { Deposit, Withdraw } from '../../generated/Staking/Staking'
 import { Transaction, TransactionCount } from '../../generated/schema'
-
-import { createVoterIfNonExistent } from '../governance/mapping'
 
 function saveTransaction(
   txHash: Bytes,
@@ -49,11 +47,6 @@ export function handleDeposit(event: Deposit): void {
   }
   depositTransactions.count = depositTransactions.count.plus(BigInt.fromI32(1))
   depositTransactions.save()
-
-  let stakingContract = Staking.bind(event.address)
-  let voter = createVoterIfNonExistent(event.params.user)
-  voter.tokensStaked = stakingContract.balanceOf(event.params.user, event.params.tokenAddress)
-  voter.save()
 }
 
 export function handleWithdraw(event: Withdraw): void {
@@ -74,9 +67,4 @@ export function handleWithdraw(event: Withdraw): void {
   }
   withdrawTransactions.count = withdrawTransactions.count.plus(BigInt.fromI32(1))
   withdrawTransactions.save()
-
-  let stakingContract = Staking.bind(event.address)
-  let voter = createVoterIfNonExistent(event.params.user)
-  voter.tokensStaked = stakingContract.balanceOf(event.params.user, event.params.tokenAddress)
-  voter.save()
 }

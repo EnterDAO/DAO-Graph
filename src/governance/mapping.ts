@@ -1,4 +1,4 @@
-import { log, BigInt, Bytes, TypedMap, Address } from '@graphprotocol/graph-ts'
+import { BigInt, Bytes, TypedMap } from '@graphprotocol/graph-ts'
 import {
   Governance,
   ProposalCreated,
@@ -12,6 +12,7 @@ import {
   AbrogationProposalVote,
   AbrogationProposalVoteCancelled
 } from '../../generated/Governance/Governance'
+import { Supernova, Deposit, Withdraw, Lock, Delegate, DelegatedPowerIncreased, DelegatedPowerDecreased } from '../../generated/Supernova/Supernova'
 import { Proposal, ProposalStateHistory, Voter } from '../../generated/schema'
 
 let PROPOSAL_STATE_ENUM = new TypedMap<i32, string>()
@@ -244,7 +245,49 @@ export function handleAbrogationProposalVote(event: AbrogationProposalVote): voi
   voter.save()
 }
 
-export function handleAbrogationProposalVoteCancelled(event: AbrogationProposalVoteCancelled): void {
+export function handleAbrogationProposalVoteCancelled(event: AbrogationProposalVoteCancelled): void {}
 
+export function handleDeposit(event: Deposit): void {
+  let supernovaContract = Supernova.bind(event.address)
+  let voter = createVoterIfNonExistent(event.params.user)
+  voter.tokensStaked = supernovaContract.balanceOf(event.params.user)
+  voter.save()
 }
 
+export function handleWithdraw(event: Withdraw): void {
+  let supernovaContract = Supernova.bind(event.address)
+  let voter = createVoterIfNonExistent(event.params.user)
+  voter.tokensStaked = supernovaContract.balanceOf(event.params.user)
+  voter.save()
+}
+
+export function handleLock(event: Lock): void {
+  let supernovaContract = Supernova.bind(event.address)
+  let voter = createVoterIfNonExistent(event.params.user)
+  voter.lockedUntil = supernovaContract.userLockedUntil(event.params.user)
+  voter.save()
+}
+
+export function handleDelegate(event: Delegate): void {
+  let supernovaContract = Supernova.bind(event.address)
+  let voter = createVoterIfNonExistent(event.params.from)
+  voter.hasActiveDelegation = !(supernovaContract.userDelegatedTo(event.params.from)
+    .equals(Bytes.fromHexString('0x0000000000000000000000000000000000000000')))
+  // for sanity, covered by following two handler as well
+  voter.delegatedPower = supernovaContract.delegatedPower(event.params.to)
+  voter.save()
+}
+
+export function handleDelegatedPowerIncreased(event: DelegatedPowerIncreased): void {
+  let supernovaContract = Supernova.bind(event.address)
+  let voter = createVoterIfNonExistent(event.params.from)
+  voter.delegatedPower = supernovaContract.delegatedPower(event.params.to)
+  voter.save()
+}
+
+export function handleDelegatedPowerDecreased(event: DelegatedPowerDecreased): void {
+  let supernovaContract = Supernova.bind(event.address)
+  let voter = createVoterIfNonExistent(event.params.from)
+  voter.delegatedPower = supernovaContract.delegatedPower(event.params.to)
+  voter.save()
+}

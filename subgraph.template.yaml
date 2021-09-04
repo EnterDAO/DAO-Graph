@@ -18,6 +18,7 @@ dataSources:
       entities:
         - Transaction
         - TransactionCount
+        - Voter
       abis:
         - name: Staking
           file: ./abis/Staking.json
@@ -27,6 +28,39 @@ dataSources:
         - event: Withdraw(indexed address,indexed address,uint256)
           handler: handleWithdraw
       file: ./src/staking/mapping.ts
+  
+  - kind: ethereum/contract
+    name: Supernova
+    network: {{network}}
+    source:
+      address: '{{Supernova}}'
+      abi: Supernova
+      startBlock: {{startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - TransactionCount
+        - Voter
+      abis:
+        - name: Supernova
+          file: ./abis/KernelFacet.json
+      eventHandlers:
+        - event: Deposit(indexed address,uint256,uint256)
+          handler: handleDeposit
+        - event: Withdraw(indexed address,uint256,uint256)
+          handler: handleWithdraw
+        - event: Lock(indexed address,uint256)
+          handler: handleLock
+        - event: Delegate(indexed address,indexed address)
+          handler: handleLock
+        - event: DelegatedPowerIncreased(indexed address,indexed address,uint256,uint256)
+          handler: handleDelegatedPowerIncreased
+        - event: DelegatedPowerDecreased(indexed address,indexed address,uint256,uint256)
+          handler: handleDelegatedPowerDecreased
+      file: ./src/governance/mapping.ts
 
   - kind: ethereum/contract
     name: Governance
@@ -41,6 +75,8 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Proposal
+        - ProposalStateHistory
+        - Voter
       abis:
         - name: Governance
           file: ./abis/Governance.json
