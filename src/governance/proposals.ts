@@ -158,7 +158,6 @@ export function handleProposalCanceled(event: ProposalCanceled): void {
     proposal.state = proposalState as string
     proposal.save()
 
-    // QUEUED --> CANCELED
     common.saveProposalStateEvent(
         proposal.id, proposalState.toString(), event.block.timestamp, BigInt.fromI32(0), event.transaction.hash.toHex()
     )

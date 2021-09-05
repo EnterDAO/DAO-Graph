@@ -90,7 +90,7 @@ dataSources:
         - event: ProposalQueued(indexed uint256,address,uint256)
           handler: handleProposalQueued
         - event: ProposalExecuted(indexed uint256,address)
-          handler: handleProposalCanceled
+          handler: handleProposalExecuted
         - event: ProposalCanceled(indexed uint256,address)
           handler: handleProposalCanceled
         - event: AbrogationProposalStarted(indexed uint256,address)

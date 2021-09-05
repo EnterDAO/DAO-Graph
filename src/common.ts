@@ -20,17 +20,6 @@ export namespace common {
         psh.endTimestamp = endTimestamp
         psh.txHash = txHash
         psh.save()
-        // // set endTimestamp of previous proposal state if its unset or greater than current psh startTimestamp
-        // if (history.length < 2) return
-        // // can't make assumptions about order of history array
-        // for (let i = 0; i < history.length; i++) {
-        //   let prevPSH = ProposalStateHistory.load(history[i])
-        //   if (prevPSH == null) continue
-        //   if (prevPSH.id == psh.id) continue
-        //   if (!prevPSH.endTimestamp.equals(BigInt.fromI32(0)) && prevPSH.endTimestamp.lt(startTimestamp)) continue
-        //   prevPSH.endTimestamp = startTimestamp
-        //   prevPSH.save()
-        // }
     }
 
     export function createVoterIfNonExistent(userAddress: Bytes): Voter {
