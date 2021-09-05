@@ -65,4 +65,4 @@ dataSources:
           handler: handleAbrogationProposalVote
         - event: AbrogationProposalVoteCancelled(indexed uint256,indexed address)
           handler: handleAbrogationProposalVoteCancelled
-      file: ./src/governance/mapping.ts
+      file: ./src/mappings.ts

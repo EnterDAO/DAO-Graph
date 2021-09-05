@@ -49,12 +49,12 @@ type Proposal @entity {
   forVotes: BigInt!
   "Should be accounted in BigInt, but saved as String due to how the UI expects"
   againstVotes: BigInt!
-  history: [ProposalStateHistory!]!
+  events: [ProposalStateEvent!]! @derivedFrom(field: "proposal")
 }
 
 # The entity is created each time a proposal changes status.
 # Timestamps may not be entirely accurate as for performance reasons we only compute the state of proposal every XX blocks
-type ProposalStateHistory @entity {
+type ProposalStateEvent @entity {
   "Id is generated: {proposalID}-{proposal.state}-{blockNumber}"
   id: ID!
   "The proposal this status change is linked to"
@@ -71,6 +71,7 @@ type ProposalStateHistory @entity {
 
 # An Enum list matching the proposal states from the Governance contract
 enum ProposalState {
+  CREATED,
   WARMUP,
   ACTIVE,
   CANCELED,
