@@ -19,7 +19,11 @@ export function handleAbrogationProposalStarted(event: AbrogationProposalStarted
 
     // QUEUED --> ABROGATED
     common.saveProposalStateEvent(
-        proposal.id, proposalState.toString(), event.block.timestamp, BigInt.fromI32(0), event.transaction.hash.toHex()
+        proposal.id,
+        proposalState.toString(),
+        event.block.timestamp,
+        BigInt.fromI32(0),
+        event.transaction.hash.toHex()
     )
 }
 
@@ -31,18 +35,31 @@ export function handleAbrogationProposalExecuted(event: AbrogationProposalExecut
     proposal.state = proposalState as string
     proposal.save()
 
-    // ABROGATED --> CANCELED
+    /**
+     * Add the missing ABROGATED event
+     */
     common.saveProposalStateEvent(
-        proposal.id, proposalState.toString(), event.block.timestamp, BigInt.fromI32(0), event.transaction.hash.toHex()
+        proposal.id,
+        constants.PROPOSAL_STATE_ENUM.get(9) as string,
+        event.block.timestamp.minus(constants.BIGINT_ONE),
+        constants.BIGINT_ZERO,
+        ""
+    )
+
+    /**
+     * Add CANCELED event
+     */
+    common.saveProposalStateEvent(
+        proposal.id,
+        proposalState.toString(),
+        event.block.timestamp,
+        BigInt.fromI32(0),
+        event.transaction.hash.toHex()
     )
 }
 
 export function handleAbrogationProposalVote(event: AbrogationProposalVote): void {
-    // TODO
-    let voter = common.createVoterIfNonExistent(event.params.user)
-    voter.votes = voter.votes.plus(BigInt.fromI32(1))
-    voter.votingPower = event.params.power
-    voter.save()
+    common.updateVoterOnVote(event.params.user, event.params.power);
 }
 
 export function handleAbrogationProposalVoteCancelled(event: AbrogationProposalVoteCancelled): void {

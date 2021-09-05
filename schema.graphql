@@ -100,7 +100,29 @@ type Voter @entity {
   "Number of proposals created by this address"
   proposals: BigInt!
   "The voting power of the address"
-  votingPower: BigInt!
+  votingPower: BigInt! # TODO must resolve this property. Not populated correctly
   "Whether or not the address delegated "
   hasActiveDelegation: Boolean!
+}
+
+type Overview @entity {
+  id: ID!
+  "Average lock time"
+  avgLockTimeSeconds: BigInt! # TODO There is a bug in the calculations. At some point the avgLockTimeSeconds is negative
+#  "Total number of holders"
+#  holders: Int! TODO we can get it through etherscan
+  "Total delegated power"
+  totalDelegatedPower: BigInt!
+  "Total vENTR"
+  totalVEntr: BigInt!
+  "Number of voters"
+  voters: Int!
+  "Kernel users"
+  kernelUsers: Int!
+#  "Holders excluding staking users"
+#  holdersStakingExcluded: Int!  TODO we do not need it right now
+  "Used to efficiently calculate avgLockTimeSeconds"
+  _sumLockTime: BigInt!
+  "Used to efficiently calculate avgLockTimeSeconds"
+  _numberOfLocks: BigInt!
 }

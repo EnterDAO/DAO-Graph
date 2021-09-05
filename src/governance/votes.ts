@@ -24,10 +24,7 @@ export function handleVote(event: Vote): void {
         ''
     )
 
-    let voter = common.createVoterIfNonExistent(event.params.user)
-    voter.votes = voter.votes.plus(BigInt.fromI32(1))
-    voter.votingPower = event.params.power
-    voter.save()
+    common.updateVoterOnVote(event.params.user, event.params.power);
 }
 
 export function handleVoteCanceled(event: VoteCanceled): void {

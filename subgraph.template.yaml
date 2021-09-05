@@ -60,7 +60,7 @@ dataSources:
           handler: handleDelegatedPowerIncreased
         - event: DelegatedPowerDecreased(indexed address,indexed address,uint256,uint256)
           handler: handleDelegatedPowerDecreased
-      file: ./src/kernel/mappings.ts
+      file: ./src/mappings.ts
 
   - kind: ethereum/contract
     name: Governance

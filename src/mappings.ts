@@ -8,6 +8,9 @@ import { handleAbrogationProposalStarted,
     handleAbrogationProposalVote,
     handleAbrogationProposalVoteCancelled,
     handleAbrogationProposalExecuted } from './governance/abrogation';
+import {handleDelegate, handleDelegatedPowerIncreased, handleDelegatedPowerDecreased} from './kernel/delegations';
+import {handleDeposit, handleWithdraw} from './kernel/deposits-withdrawals';
+import {handleLock} from './kernel/locks';
 
 /**
  * GOVERNANCE
@@ -34,4 +37,16 @@ export {
     handleAbrogationProposalVote,
     handleAbrogationProposalVoteCancelled,
     handleAbrogationProposalExecuted,
+}
+
+/**
+ * KERNEL
+ */
+export {
+    handleDeposit,
+    handleWithdraw,
+    handleLock,
+    handleDelegate,
+    handleDelegatedPowerIncreased,
+    handleDelegatedPowerDecreased
 }

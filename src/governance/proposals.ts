@@ -151,14 +151,18 @@ export function handleProposalExecuted(event: ProposalExecuted): void {
 }
 
 export function handleProposalCanceled(event: ProposalCanceled): void {
-    let proposal = Proposal.load(event.params.proposalId.toString())
-    let govContract = Governance.bind(event.address)
-    let proposalState = constants.PROPOSAL_STATE_ENUM.get(govContract.state(event.params.proposalId))
+    let proposal = Proposal.load(event.params.proposalId.toString());
+    let govContract = Governance.bind(event.address);
+    let proposalState = constants.PROPOSAL_STATE_ENUM.get(govContract.state(event.params.proposalId));
 
-    proposal.state = proposalState as string
-    proposal.save()
+    proposal.state = proposalState as string;
+    proposal.save();
 
     common.saveProposalStateEvent(
-        proposal.id, proposalState.toString(), event.block.timestamp, BigInt.fromI32(0), event.transaction.hash.toHex()
-    )
+        proposal.id,
+        proposalState.toString(),
+        event.block.timestamp,
+        BigInt.fromI32(0),
+        event.transaction.hash.toHex()
+    );
 }
