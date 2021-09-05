@@ -88,18 +88,19 @@ enum ProposalState {
 type Voter @entity {
   "The ethereum address of a voter"
   id: ID! # !Not compatible with the UI. UI must be updated from `address` to `id`
+  userAddress: Bytes!
   "Number of tokens staked"
-  tokensStaked: String! # !Not compatible with the UI. UI must be updated from `kekStaked` to `tokensStaked`
+  tokensStaked: BigInt! # !Not compatible with the UI. UI must be updated from `kekStaked` to `tokensStaked`
   "The timestamp until the voter has locked his tokens"
   lockedUntil: BigInt!
   "The amount of delegating power the voter has"
-  delegatedPower: String!
+  delegatedPower: BigInt!
   "Number of times the voter voted"
   votes: BigInt!
   "Number of proposals created by this address"
   proposals: BigInt!
   "The voting power of the address"
-  votingPower: String!
+  votingPower: BigInt!
   "Whether or not the address delegated "
   hasActiveDelegation: Boolean!
 }
