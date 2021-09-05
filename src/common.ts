@@ -1,5 +1,6 @@
 import {BigInt} from "@graphprotocol/graph-ts/index";
-import {ProposalStateEvent} from "../generated/schema";
+import {ProposalStateEvent, Voter} from "../generated/schema";
+import {Bytes} from "@graphprotocol/graph-ts";
 
 export namespace common {
 
@@ -30,6 +31,23 @@ export namespace common {
         //   prevPSH.endTimestamp = startTimestamp
         //   prevPSH.save()
         // }
+    }
+
+    export function createVoterIfNonExistent(userAddress: Bytes): Voter {
+        let voter = Voter.load(userAddress.toHex())
+        if (voter == null) {
+            voter = new Voter(userAddress.toHex())
+            voter.userAddress = userAddress
+            voter.tokensStaked = BigInt.fromI32(0)
+            voter.lockedUntil = BigInt.fromI32(0)
+            voter.delegatedPower = BigInt.fromI32(0)
+            voter.votes = BigInt.fromI32(0)
+            voter.proposals = BigInt.fromI32(0)
+            voter.votingPower = BigInt.fromI32(0)
+            voter.hasActiveDelegation = false
+            voter.save()
+        }
+        return voter as Voter
     }
 }
 

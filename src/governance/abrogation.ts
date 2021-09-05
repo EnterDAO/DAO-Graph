@@ -38,7 +38,11 @@ export function handleAbrogationProposalExecuted(event: AbrogationProposalExecut
 }
 
 export function handleAbrogationProposalVote(event: AbrogationProposalVote): void {
-
+    // TODO
+    let voter = common.createVoterIfNonExistent(event.params.user)
+    voter.votes = voter.votes.plus(BigInt.fromI32(1))
+    voter.votingPower = event.params.power
+    voter.save()
 }
 
 export function handleAbrogationProposalVoteCancelled(event: AbrogationProposalVoteCancelled): void {

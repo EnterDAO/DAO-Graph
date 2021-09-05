@@ -75,6 +75,10 @@ export function handleProposalCreated(event: ProposalCreated): void {
         activeEndTime,
         ''
     )
+
+    let voter = common.createVoterIfNonExistent(event.transaction.from)
+    voter.proposals = voter.proposals.plus(BigInt.fromI32(1))
+    voter.save()
 }
 
 export function handleProposalQueued(event: ProposalQueued): void {

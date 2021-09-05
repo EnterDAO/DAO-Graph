@@ -23,6 +23,11 @@ export function handleVote(event: Vote): void {
         proposal.createTime.plus(proposal.warmUpDuration).plus(proposal.activeDuration),
         ''
     )
+
+    let voter = common.createVoterIfNonExistent(event.params.user)
+    voter.votes = voter.votes.plus(BigInt.fromI32(1))
+    voter.votingPower = event.params.power
+    voter.save()
 }
 
 export function handleVoteCanceled(event: VoteCanceled): void {

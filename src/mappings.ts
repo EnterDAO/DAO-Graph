@@ -9,8 +9,10 @@ import { handleAbrogationProposalStarted,
     handleAbrogationProposalVoteCancelled,
     handleAbrogationProposalExecuted } from './governance/abrogation';
 
+/**
+ * GOVERNANCE
+ */
 export {
-    // handleBlock,
     /**
      * Proposal Events
      */
