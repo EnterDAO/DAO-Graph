@@ -30,11 +30,11 @@ dataSources:
       file: ./src/staking/mapping.ts
   
   - kind: ethereum/contract
-    name: Supernova
+    name: Kernel
     network: {{network}}
     source:
-      address: '{{Supernova}}'
-      abi: Supernova
+      address: '{{Kernel}}'
+      abi: Kernel
       startBlock: {{startBlock}}
     mapping:
       kind: ethereum/events
@@ -45,7 +45,7 @@ dataSources:
         - TransactionCount
         - Voter
       abis:
-        - name: Supernova
+        - name: Kernel
           file: ./abis/KernelFacet.json
       eventHandlers:
         - event: Deposit(indexed address,uint256,uint256)
@@ -60,7 +60,7 @@ dataSources:
           handler: handleDelegatedPowerIncreased
         - event: DelegatedPowerDecreased(indexed address,indexed address,uint256,uint256)
           handler: handleDelegatedPowerDecreased
-      file: ./src/governance/mapping.ts
+      file: ./src/kernel/mappings.ts
 
   - kind: ethereum/contract
     name: Governance
@@ -75,7 +75,7 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Proposal
-        - ProposalStateHistory
+        - ProposalStateEvent
         - Voter
       abis:
         - name: Governance
@@ -90,7 +90,7 @@ dataSources:
         - event: ProposalQueued(indexed uint256,address,uint256)
           handler: handleProposalQueued
         - event: ProposalExecuted(indexed uint256,address)
-          handler: handleProposalCanceled
+          handler: handleProposalExecuted
         - event: ProposalCanceled(indexed uint256,address)
           handler: handleProposalCanceled
         - event: AbrogationProposalStarted(indexed uint256,address)
@@ -101,4 +101,4 @@ dataSources:
           handler: handleAbrogationProposalVote
         - event: AbrogationProposalVoteCancelled(indexed uint256,indexed address)
           handler: handleAbrogationProposalVoteCancelled
-      file: ./src/governance/mapping.ts
+      file: ./src/mappings.ts
