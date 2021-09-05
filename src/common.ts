@@ -1,25 +1,24 @@
 import {BigInt} from "@graphprotocol/graph-ts/index";
 import {Overview, ProposalStateEvent, Voter} from "../generated/schema";
-import {Address, Bytes} from "@graphprotocol/graph-ts";
+import {Address, Bytes, ethereum } from "@graphprotocol/graph-ts";
 import {constants} from "./constants";
 
 export namespace common {
 
-    export function saveProposalStateEvent(
-        proposalId: string,
-        proposalState: string,
-        startTimestamp: BigInt,
-        endTimestamp: BigInt,
-        txHash: string
-    ): void {
-        let id = proposalId + '-' + proposalState
+    // @ts-ignore
+    export function saveProposalEvent(proposalId: string, event: ethereum.Event, eventType: string, eta: i32 = 0): void {
+        let id = proposalId + '-' + eventType;
         let psh = ProposalStateEvent.load(id)
         if (psh == null) psh = new ProposalStateEvent(id)
-        psh.proposal = proposalId
-        psh.name = proposalState
-        psh.startTimestamp = startTimestamp
-        psh.endTimestamp = endTimestamp
-        psh.txHash = txHash
+
+        psh.proposal = proposalId;
+        // @ts-ignore
+        psh.proposalId = I32.parseInt(proposalId);
+        psh.caller = event.transaction.from;
+        psh.eventType = eventType;
+        psh.createTime = event.block.timestamp.toI32();
+        psh.txHash = event.transaction.hash.toHex();
+        psh.eta = eta;
         psh.save()
     }
 

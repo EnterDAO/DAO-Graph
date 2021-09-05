@@ -12,56 +12,23 @@ import {common} from "../common";
 export function handleAbrogationProposalStarted(event: AbrogationProposalStarted): void {
     let proposal = Proposal.load(event.params.proposalId.toString())
     let govContract = Governance.bind(event.address)
-    let proposalState = constants.PROPOSAL_STATE_ENUM.get(govContract.state(event.params.proposalId))
+    let proposalState = constants.PROPOSAL_EVENTS.get(govContract.state(event.params.proposalId))
 
     proposal.state = proposalState as string
     proposal.save()
-
-    // QUEUED --> ABROGATED
-    common.saveProposalStateEvent(
-        proposal.id,
-        proposalState.toString(),
-        event.block.timestamp,
-        BigInt.fromI32(0),
-        event.transaction.hash.toHex()
-    )
 }
 
 export function handleAbrogationProposalExecuted(event: AbrogationProposalExecuted): void {
     let proposal = Proposal.load(event.params.proposalId.toString())
-    let govContract = Governance.bind(event.address)
-    let proposalState = constants.PROPOSAL_STATE_ENUM.get(govContract.state(event.params.proposalId))
+    let proposalState = constants.PROPOSAL_EVENTS.get(3) as string;
+    proposal.state = proposalState;
+    proposal.save();
 
-    proposal.state = proposalState as string
-    proposal.save()
-
-    /**
-     * Add the missing ABROGATED event
-     */
-    common.saveProposalStateEvent(
-        proposal.id,
-        constants.PROPOSAL_STATE_ENUM.get(9) as string,
-        event.block.timestamp.minus(constants.BIGINT_ONE),
-        constants.BIGINT_ZERO,
-        ""
-    )
-
-    /**
-     * Add CANCELED event
-     */
-    common.saveProposalStateEvent(
-        proposal.id,
-        proposalState.toString(),
-        event.block.timestamp,
-        BigInt.fromI32(0),
-        event.transaction.hash.toHex()
-    )
+    common.saveProposalEvent(proposal.id, event, proposalState);
 }
 
 export function handleAbrogationProposalVote(event: AbrogationProposalVote): void {
     common.updateVoterOnVote(event.params.user, event.params.power);
 }
 
-export function handleAbrogationProposalVoteCancelled(event: AbrogationProposalVoteCancelled): void {
-
-}
+export function handleAbrogationProposalVoteCancelled(event: AbrogationProposalVoteCancelled): void { }

@@ -42,9 +42,8 @@ type Proposal @entity {
   gracePeriodDuration: BigInt!
   acceptanceThreshold: BigInt!
   minQuorum: BigInt!
-  state: ProposalState!
-  # TODO stateTimeLeft?
-  eta: BigInt!
+  state: ProposalEvent!
+  eta: Int!
   "Should be accounted in BigInt, but saved as String due to how the UI expects it"
   forVotes: BigInt!
   "Should be accounted in BigInt, but saved as String due to how the UI expects"
@@ -53,36 +52,34 @@ type Proposal @entity {
   votingHistory: [Vote!]! @derivedFrom(field: "proposal")
 }
 
-# The entity is created each time a proposal changes status.
-# Timestamps may not be entirely accurate as for performance reasons we only compute the state of proposal every XX blocks
+# The entity is created each time a proposal event occurs.
 type ProposalStateEvent @entity {
-  "Id is generated: {proposalID}-{proposal.state}-{blockNumber}"
+  "Id is generated: {proposalID}-{eventType}"
   id: ID!
+  "The proposal ID"
+  proposalId: Int!
+  "The caller of the TX"
+  caller: Bytes!
+  "The type of the event"
+  eventType: ProposalEvent!
+  "The time at which the event occurred"
+  createTime: Int!
+  "The transaction hash of the event"
+  txHash: String!
+  "Present only in QUEUED event types"
+  eta: Int!
   "The proposal this status change is linked to"
   proposal: Proposal!
-  "The name of the state"
-  name: ProposalState!
-  "The timestamp at which this state has started"
-  startTimestamp: BigInt!
-  "The timestamp at which this state ended. Terminal states such as CANCELED, FAILED, EXPIRED, EXECUTED  and ABROGATED have value 0"
-  endTimestamp: BigInt!
-  "The transaction hash at which the change of the status ocurred. Populated only on EXECUTED, QUEUED, ABROGATED and CANCELLED"
-  txHash: String!
 }
 
-# An Enum list matching the proposal states from the Governance contract
-enum ProposalState {
+# An Enum list matching the proposal events from the Governance contract
+# Important! not to be confused with Proposal States! There are more proposal states but they cannot be computed from the subgraph as they are time dependant
+# The client must WILL able to and MUST reconstruct all State History based on the events and proposal data
+enum ProposalEvent {
   CREATED,
-  WARMUP,
-  ACTIVE,
-  CANCELED,
-  FAILED,
-  ACCEPTED,
   QUEUED,
-  GRACE,
-  EXPIRED,
   EXECUTED,
-  ABROGATED
+  CANCELED
 }
 
 # Voter entity used to represent addresses that have interacted with the Governance/DAO system
