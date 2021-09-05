@@ -19,7 +19,7 @@ There are `npm scripts` for all of the stages of subgraph development.
 - [X] Overview Info - Limited support. `totalVEntr` and `kernelUsers` are not yet implemented fully
 - [X] Get All Proposals
 - [X] Get Proposal by ID - Limited support. Some time based events cannot be deduced from the Subgraph.
-- [ ] Get all Votes for a given Proposal ID
+- [X] Get all Votes for a given Proposal ID
 - [ ] Get all Events for a given Proposal ID
 - [ ] Get all Voters
 - [ ] Get all Abrogation Proposals

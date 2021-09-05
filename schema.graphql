@@ -50,6 +50,7 @@ type Proposal @entity {
   "Should be accounted in BigInt, but saved as String due to how the UI expects"
   againstVotes: BigInt!
   events: [ProposalStateEvent!]! @derivedFrom(field: "proposal")
+  votingHistory: [Vote!]! @derivedFrom(field: "proposal")
 }
 
 # The entity is created each time a proposal changes status.
@@ -88,7 +89,6 @@ enum ProposalState {
 type Voter @entity {
   "The ethereum address of a voter"
   id: ID! # !Not compatible with the UI. UI must be updated from `address` to `id`
-  userAddress: Bytes!
   "Number of tokens staked"
   tokensStaked: BigInt! # !Not compatible with the UI. UI must be updated from `kekStaked` to `tokensStaked`
   "The timestamp until the voter has locked his tokens"
@@ -103,6 +103,20 @@ type Voter @entity {
   votingPower: BigInt! # TODO must resolve this property. Not populated correctly
   "Whether or not the address delegated "
   hasActiveDelegation: Boolean!
+  votingHistory: [Vote!]! @derivedFrom(field: "voter")
+}
+
+type Vote @entity {
+  "ID is generated: {proposalId}-{voterAddress}"
+  id: ID!
+  "The address of the voter"
+  address: Bytes!
+  proposalId: BigInt!
+  blockTimestamp: BigInt!
+  power: BigInt!
+  support: Boolean!
+  proposal: Proposal!
+  voter: Voter!
 }
 
 type Overview @entity {

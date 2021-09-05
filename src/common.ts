@@ -27,7 +27,6 @@ export namespace common {
         let voter = Voter.load(userAddress.toHex())
         if (voter == null) {
             voter = new Voter(userAddress.toHex())
-            voter.userAddress = userAddress
             voter.tokensStaked = constants.BIGINT_ZERO;
             voter.lockedUntil = constants.BIGINT_ZERO;
             voter.delegatedPower = constants.BIGINT_ZERO;
