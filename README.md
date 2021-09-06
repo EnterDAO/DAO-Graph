@@ -16,7 +16,7 @@ There are `yarn scripts` for all the stages of subgraph development.
 
 ## Supported APIs
 
-- [X] Overview Info - Limited support. `totalVEntr` and `kernelUsers` are not yet implemented fully
+- [ ] Overview Info - Limited support. `kernelUsers` may have bugs. `holders` not supported yet.
 - [X] Get All Proposals
 - [X] Get Proposal by ID
 - [X] Get all Votes for a given Proposal ID
@@ -25,4 +25,3 @@ There are `yarn scripts` for all the stages of subgraph development.
 - [X] Get all Abrogation Proposals
 - [X] Get Abrogation Proposal by ID
 - [X] Get Abrogation Proposal Votes by ID
-- [ ] Count Entr Token holders
