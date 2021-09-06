@@ -1,7 +1,7 @@
 import {Delegate, DelegatedPowerDecreased, DelegatedPowerIncreased, Kernel} from "../../generated/Kernel/Kernel";
 import {common} from "../common";
-import {Bytes} from "@graphprotocol/graph-ts/index";
 import {Address} from "@graphprotocol/graph-ts";
+import {constants} from "../constants";
 
 export function handleDelegate(event: Delegate): void {
     let voter = common.createVoterIfNonExistent(event.params.from);
@@ -17,6 +17,11 @@ export function handleDelegatedPowerIncreased(event: DelegatedPowerIncreased): v
     let overview = common.getOverview();
     overview.totalDelegatedPower = overview.totalDelegatedPower.plus(event.params.amount);
     overview.save();
+
+    // First time getting delegation && does not have tokens staked yet
+    if (voter.tokensStaked.equals(constants.BIGINT_ZERO) && event.params.amount.equals(event.params.to_newDelegatedPower)) {
+        common.updateKernelUsers(1);
+    }
 }
 
 export function handleDelegatedPowerDecreased(event: DelegatedPowerDecreased): void {
@@ -27,4 +32,8 @@ export function handleDelegatedPowerDecreased(event: DelegatedPowerDecreased): v
     let overview = common.getOverview();
     overview.totalDelegatedPower = overview.totalDelegatedPower.minus(event.params.amount);
     overview.save();
+
+    // if (voter.tokensStaked.equals(constants.BIGINT_ZERO) && voter.delegatedPower.equals(constants.BIGINT_ZERO)) {
+    //     common.updateKernelUsers(-1);
+    // }
 }

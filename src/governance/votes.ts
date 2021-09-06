@@ -1,7 +1,6 @@
 import {Governance, Vote, VoteCanceled} from "../../generated/Governance/Governance";
 import {Proposal, Vote as VoteCast } from "../../generated/schema";
 import {store} from "@graphprotocol/graph-ts";
-import {constants} from "../constants";
 import {common} from "../common";
 
 export function handleVote(event: Vote): void {
@@ -13,7 +12,7 @@ export function handleVote(event: Vote): void {
     proposal.againstVotes = proposalData.value7;
     proposal.save();
 
-    common.updateVoterOnVote(event.params.user, event.params.power);
+    common.updateVoterOnVote(event.params.user);
 
     // Once voted, Voter can only change support -> true/false
     let voteId = event.params.proposalId.toString() + '-' + event.params.user.toHex();
@@ -25,6 +24,7 @@ export function handleVote(event: Vote): void {
         vote.proposalId = event.params.proposalId;
         vote.proposal = vote.proposalId.toString(); // Map for deriveFrom
         vote.power = event.params.power;
+        vote.abrogatedProposal = "";
     }
     vote.blockTimestamp = event.block.timestamp;
     vote.support = event.params.support;

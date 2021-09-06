@@ -21,20 +21,20 @@ export function handleProposalCreated(event: ProposalCreated): void {
     proposal.proposer = proposalData.value1;
     proposal.description = proposalData.value2;
     proposal.title = proposalData.value3;
-    proposal.createTime = proposalData.value4;
+    proposal.createTime = proposalData.value4.toI32();
     proposal.eta = proposalData.value5.toI32();
     proposal.forVotes = proposalData.value6;
     proposal.againstVotes = proposalData.value7;
-    proposal.blockTimestamp = event.block.timestamp;
+    proposal.blockTimestamp = event.block.timestamp.toI32();
     proposal.state = proposalState;
 
     // proposal params
-    proposal.warmUpDuration = proposalParams.warmUpDuration;
-    proposal.activeDuration = proposalParams.activeDuration;
-    proposal.queueDuration = proposalParams.queueDuration;
-    proposal.gracePeriodDuration = proposalParams.gracePeriodDuration;
-    proposal.acceptanceThreshold = proposalParams.acceptanceThreshold;
-    proposal.minQuorum = proposalParams.minQuorum;
+    proposal.warmUpDuration = proposalParams.warmUpDuration.toI32();
+    proposal.activeDuration = proposalParams.activeDuration.toI32();
+    proposal.queueDuration = proposalParams.queueDuration.toI32();
+    proposal.gracePeriodDuration = proposalParams.gracePeriodDuration.toI32();
+    proposal.acceptanceThreshold = proposalParams.acceptanceThreshold.toI32();
+    proposal.minQuorum = proposalParams.minQuorum.toI32();
     // proposal action
     proposal.targets = proposalActions.value0 as Array<Bytes>;
     proposal.values = proposalActions.value1;

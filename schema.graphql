@@ -18,8 +18,6 @@ type TransactionCount @entity {
   count: BigInt!
 }
 
-# --- Start of DAO/Governance Entities --- #
-
 # Proposal Entity created once ProposalCreated event is fired
 # The event provides only the ID of the proposal, so in order for the data to be populated a Contract call must be executed to load and populate the proposal info
 type Proposal @entity {
@@ -29,19 +27,19 @@ type Proposal @entity {
   description: String!
   title: String!
   "The block timestamp -1 at which the proposal was created"
-  createTime: BigInt!
+  createTime: Int!
   targets: [Bytes!]!
   values: [BigInt!]!
   signatures: [String!]!
   calldatas: [Bytes!]!
   " The block timestamp when the proposal was created. Should be createTime + 1"
-  blockTimestamp: BigInt!
-  warmUpDuration: BigInt!
-  activeDuration: BigInt!
-  queueDuration: BigInt!
-  gracePeriodDuration: BigInt!
-  acceptanceThreshold: BigInt!
-  minQuorum: BigInt!
+  blockTimestamp: Int!
+  warmUpDuration: Int!
+  activeDuration: Int!
+  queueDuration: Int!
+  gracePeriodDuration: Int!
+  acceptanceThreshold: Int!
+  minQuorum: Int!
   state: ProposalEvent!
   eta: Int!
   "Should be accounted in BigInt, but saved as String due to how the UI expects it"
@@ -96,8 +94,6 @@ type Voter @entity {
   votes: Int!
   "Number of proposals created by this address"
   proposals: Int!
-  "The voting power of the address"
-  votingPower: BigInt! # TODO must resolve this property. Not populated correctly
   "Whether or not the address delegated "
   hasActiveDelegation: Boolean!
   votingHistory: [Vote!]! @derivedFrom(field: "voter")
@@ -120,19 +116,15 @@ type Vote @entity {
 type Overview @entity {
   id: ID!
   "Average lock time"
-  avgLockTimeSeconds: Int! # TODO There is a bug in the calculations. At some point the avgLockTimeSeconds is negative
+  avgLockTimeSeconds: Int!
 #  "Total number of holders"
 #  holders: Int! TODO we can get it through etherscan
   "Total delegated power"
   totalDelegatedPower: BigInt!
-  "Total vENTR"
-  totalVEntr: BigInt!
   "Number of voters"
   voters: Int!
   "Kernel users"
-  kernelUsers: Int! # TODO There is a bug in the calculation
-#  "Holders excluding staking users"
-#  holdersStakingExcluded: Int!  TODO we do not need it right now
+  kernelUsers: Int!
   "Used to efficiently calculate avgLockTimeSeconds"
   _sumLockTime: BigInt!
   "Used to efficiently calculate avgLockTimeSeconds"

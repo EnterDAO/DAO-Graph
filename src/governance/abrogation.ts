@@ -46,7 +46,7 @@ export function handleAbrogationProposalVote(event: AbrogationProposalVote): voi
     ap.againstVotes = apData.value4;
     ap.save();
 
-    common.updateVoterOnVote(event.params.user, event.params.power);
+    common.updateVoterOnVote(event.params.user);
 
     // Once voted, Voter can only change support -> true/false
     let voteId = apId + '-' + event.params.user.toHex();
@@ -57,13 +57,11 @@ export function handleAbrogationProposalVote(event: AbrogationProposalVote): voi
         vote.voter = event.params.user.toString(); // Map for deriveFrom
         vote.power = event.params.power;
         vote.abrogatedProposal = apId;
+        vote.proposal = "";
     }
     vote.blockTimestamp = event.block.timestamp;
     vote.support = event.params.support;
     vote.save();
-
-
-    common.updateVoterOnVote(event.params.user, event.params.power);
 }
 
 export function handleAbrogationProposalVoteCancelled(event: AbrogationProposalVoteCancelled): void {

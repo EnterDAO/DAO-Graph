@@ -1,4 +1,3 @@
-import {BigInt} from "@graphprotocol/graph-ts/index";
 import {Overview, ProposalStateEvent, Voter} from "../generated/schema";
 import {Address, Bytes, ethereum } from "@graphprotocol/graph-ts";
 import {constants} from "./constants";
@@ -31,7 +30,6 @@ export namespace common {
             voter.delegatedPower = constants.BIGINT_ZERO;
             voter.votes = 0;
             voter.proposals = 0;
-            voter.votingPower = constants.BIGINT_ZERO;
             voter.hasActiveDelegation = false
             voter.save()
         }
@@ -45,7 +43,6 @@ export namespace common {
             overview.avgLockTimeSeconds = 0;
             // overview.holders = 0;
             overview.totalDelegatedPower = constants.BIGINT_ZERO;
-            overview.totalVEntr = constants.BIGINT_ZERO;
             overview.voters = 0
             overview.kernelUsers = 0;
             // overview.holdersStakingExcluded = 0;
@@ -62,13 +59,12 @@ export namespace common {
         overview.save();
     }
 
-    export function updateVoterOnVote(user: Address, power: BigInt): void {
+    export function updateVoterOnVote(user: Address): void {
         let voter = common.createVoterIfNonExistent(user);
         if (voter.votes == 0) {
             common.incrementVoterCount();
         }
         voter.votes += 1;
-        voter.votingPower = power;
         voter.save();
     }
 
