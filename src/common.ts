@@ -41,11 +41,10 @@ export namespace common {
         if (overview == null) {
             overview = new Overview("OVERVIEW");
             overview.avgLockTimeSeconds = 0;
-            // overview.holders = 0;
+            overview.holders = 0;
             overview.totalDelegatedPower = constants.BIGINT_ZERO;
             overview.voters = 0
             overview.kernelUsers = 0;
-            // overview.holdersStakingExcluded = 0;
             overview._sumLockTime = constants.BIGINT_ZERO;
             overview._numberOfLocks = constants.BIGINT_ZERO;
             overview.save();

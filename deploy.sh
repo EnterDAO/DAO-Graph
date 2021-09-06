@@ -39,13 +39,13 @@ fi
 
 # Create subgraph if missing
 {
-  graph create enterdao/DAO-Graph${SUBGRAPH_EXT} --node ${GRAPH_NODE}
+  graph create enterdao/DAO-Graph --node ${GRAPH_NODE}
 } || {
   echo 'Subgraph was already created'
 }
 
 # Deploy subgraph
-graph deploy enterdao/DAO-Graph${SUBGRAPH_EXT} --ipfs ${IPFS_NODE} --node ${GRAPH_NODE}
+graph deploy enterdao/DAO-Graph --ipfs ${IPFS_NODE} --node ${GRAPH_NODE}
 
 # Remove manifest
 rm subgraph.yaml

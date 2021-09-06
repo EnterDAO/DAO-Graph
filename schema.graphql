@@ -85,17 +85,17 @@ type Voter @entity {
   "The ethereum address of a voter"
   id: ID! # !Not compatible with the UI. UI must be updated from `address` to `id`
   "Number of tokens staked"
-  tokensStaked: BigInt!
+  tokensStaked: BigInt! # TODO bug in the calculation
   "The timestamp until the voter has locked his tokens"
   lockedUntil: Int!
   "The amount of delegating power the voter has"
-  delegatedPower: BigInt!
+  delegatedPower: BigInt! # TODO bug in the calculation
   "Number of times the voter voted"
   votes: Int!
   "Number of proposals created by this address"
   proposals: Int!
   "Whether or not the address delegated "
-  hasActiveDelegation: Boolean!
+  hasActiveDelegation: Boolean! # TODO bug in the calculation
   votingHistory: [Vote!]! @derivedFrom(field: "voter")
 }
 
@@ -117,8 +117,8 @@ type Overview @entity {
   id: ID!
   "Average lock time"
   avgLockTimeSeconds: Int!
-#  "Total number of holders"
-#  holders: Int! TODO we can get it through etherscan
+  "Total number of holders"
+  holders: Int! # TODO not yet calculated
   "Total delegated power"
   totalDelegatedPower: BigInt!
   "Number of voters"
