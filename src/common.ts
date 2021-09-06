@@ -45,6 +45,7 @@ export namespace common {
             overview.totalDelegatedPower = constants.BIGINT_ZERO;
             overview.voters = 0
             overview.kernelUsers = 0;
+            overview.proposals = 0;
             overview._sumLockTime = constants.BIGINT_ZERO;
             overview._numberOfLocks = constants.BIGINT_ZERO;
             overview.save();

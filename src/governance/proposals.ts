@@ -46,6 +46,10 @@ export function handleProposalCreated(event: ProposalCreated): void {
     voter.proposals += 1;
     voter.save();
 
+    let overview = common.getOverview();
+    overview.proposals += 1;
+    overview.save();
+
     common.saveProposalEvent(proposal.id, event, proposalState);
 }
 

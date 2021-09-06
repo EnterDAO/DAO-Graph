@@ -125,6 +125,8 @@ type Overview @entity {
   voters: Int!
   "Kernel users"
   kernelUsers: Int!
+  "Count of all proposals that have been created"
+  proposals: Int!
   "Used to efficiently calculate avgLockTimeSeconds"
   _sumLockTime: BigInt!
   "Used to efficiently calculate avgLockTimeSeconds"
