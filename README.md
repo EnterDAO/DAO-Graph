@@ -16,7 +16,7 @@ There are `yarn scripts` for all the stages of subgraph development.
 
 ## Supported APIs
 
-- [ ] Overview Info - Limited support. `kernelUsers` may have bugs. `holders` not supported yet.
+- [ ] Overview Info - Limited support. `holders` not supported yet.
 - [X] Get All Proposals
 - [X] Get Proposal by ID
 - [X] Get all Votes for a given Proposal ID
