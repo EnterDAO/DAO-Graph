@@ -21,7 +21,7 @@ There are `yarn scripts` for all the stages of subgraph development.
 - [X] Get Proposal by ID
 - [X] Get all Votes for a given Proposal ID
 - [X] Get all Events for a given Proposal ID
-- [X] Get all Voters - Limited support. `votingPower` is not yet implemented!
+- [X] Get all Voters
 - [X] Get all Abrogation Proposals
 - [X] Get Abrogation Proposal by ID
 - [X] Get Abrogation Proposal Votes by ID
