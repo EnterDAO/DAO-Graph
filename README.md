@@ -25,3 +25,4 @@ There are `yarn scripts` for all the stages of subgraph development.
 - [X] Get all Abrogation Proposals
 - [X] Get Abrogation Proposal by ID
 - [X] Get Abrogation Proposal Votes by ID
+- [ ] Count Entr Token holders
