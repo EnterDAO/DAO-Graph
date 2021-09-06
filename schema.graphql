@@ -87,15 +87,15 @@ type Voter @entity {
   "The ethereum address of a voter"
   id: ID! # !Not compatible with the UI. UI must be updated from `address` to `id`
   "Number of tokens staked"
-  tokensStaked: BigInt! # !Not compatible with the UI. UI must be updated from `kekStaked` to `tokensStaked`
+  tokensStaked: BigInt!
   "The timestamp until the voter has locked his tokens"
-  lockedUntil: BigInt!
+  lockedUntil: Int!
   "The amount of delegating power the voter has"
   delegatedPower: BigInt!
   "Number of times the voter voted"
-  votes: BigInt!
+  votes: Int!
   "Number of proposals created by this address"
-  proposals: BigInt!
+  proposals: Int!
   "The voting power of the address"
   votingPower: BigInt! # TODO must resolve this property. Not populated correctly
   "Whether or not the address delegated "
@@ -104,7 +104,7 @@ type Voter @entity {
 }
 
 type Vote @entity {
-  "ID is generated: {proposalId}-{voterAddress}"
+  "ID is generated: {proposalId}-{voterAddress} for normal proposals and {proposal}-AP-{voterAddress} for Abrogated proposals"
   id: ID!
   "The address of the voter"
   address: Bytes!
@@ -112,14 +112,15 @@ type Vote @entity {
   blockTimestamp: BigInt!
   power: BigInt!
   support: Boolean!
-  proposal: Proposal!
-  voter: Voter!
+  proposal: Proposal! # Used for derivedFrom
+  abrogatedProposal: AbrogationProposal! # Used for derivedFrom
+  voter: Voter! # Used for derivedFrom
 }
 
 type Overview @entity {
   id: ID!
   "Average lock time"
-  avgLockTimeSeconds: BigInt! # TODO There is a bug in the calculations. At some point the avgLockTimeSeconds is negative
+  avgLockTimeSeconds: Int! # TODO There is a bug in the calculations. At some point the avgLockTimeSeconds is negative
 #  "Total number of holders"
 #  holders: Int! TODO we can get it through etherscan
   "Total delegated power"
@@ -129,11 +130,24 @@ type Overview @entity {
   "Number of voters"
   voters: Int!
   "Kernel users"
-  kernelUsers: Int!
+  kernelUsers: Int! # TODO There is a bug in the calculation
 #  "Holders excluding staking users"
 #  holdersStakingExcluded: Int!  TODO we do not need it right now
   "Used to efficiently calculate avgLockTimeSeconds"
   _sumLockTime: BigInt!
   "Used to efficiently calculate avgLockTimeSeconds"
   _numberOfLocks: BigInt!
+}
+
+type AbrogationProposal @entity {
+  "The ID is generated: {proposalID}-AP"
+  id: ID!
+  "The creator of the proposal"
+  creator: Bytes!
+  "The creation timestamp"
+  createTime: Int!
+  description: String!
+  forVotes: BigInt!
+  againstVotes: BigInt!
+  votingHistory: [Vote!]! @derivedFrom(field: "abrogatedProposal")
 }

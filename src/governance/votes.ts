@@ -5,15 +5,13 @@ import {constants} from "../constants";
 import {common} from "../common";
 
 export function handleVote(event: Vote): void {
-    let proposal = Proposal.load(event.params.proposalId.toString())
-    let govContract = Governance.bind(event.address)
-    let proposalData = govContract.proposals(event.params.proposalId)
-    let proposalState = constants.PROPOSAL_EVENTS.get(govContract.state(event.params.proposalId))
+    let proposal = Proposal.load(event.params.proposalId.toString());
+    let govContract = Governance.bind(event.address);
+    let proposalData = govContract.proposals(event.params.proposalId);
 
-    proposal.forVotes = proposalData.value6
-    proposal.againstVotes = proposalData.value7
-    proposal.state = proposalState as string
-    proposal.save()
+    proposal.forVotes = proposalData.value6;
+    proposal.againstVotes = proposalData.value7;
+    proposal.save();
 
     common.updateVoterOnVote(event.params.user, event.params.power);
 
@@ -34,13 +32,6 @@ export function handleVote(event: Vote): void {
 }
 
 export function handleVoteCanceled(event: VoteCanceled): void {
-    let proposal = Proposal.load(event.params.proposalId.toString())
-    let govContract = Governance.bind(event.address)
-    let proposalState = constants.PROPOSAL_EVENTS.get(govContract.state(event.params.proposalId))
-
-    proposal.state = proposalState as string
-    proposal.save()
-
     let voteId = event.params.proposalId.toString() + '-' + event.params.user.toHex();
     store.remove('Vote', voteId);
 }

@@ -4,18 +4,27 @@ import {
     AbrogationProposalVote, AbrogationProposalVoteCancelled,
     Governance
 } from "../../generated/Governance/Governance";
-import {Proposal} from "../../generated/schema";
-import {BigInt} from "@graphprotocol/graph-ts/index";
+import {Proposal, Vote as VoteCast, AbrogationProposal} from "../../generated/schema";
 import {constants} from "../constants";
 import {common} from "../common";
+import {store} from "@graphprotocol/graph-ts/index";
 
 export function handleAbrogationProposalStarted(event: AbrogationProposalStarted): void {
-    let proposal = Proposal.load(event.params.proposalId.toString())
-    let govContract = Governance.bind(event.address)
-    let proposalState = constants.PROPOSAL_EVENTS.get(govContract.state(event.params.proposalId))
+    let apId = event.params.proposalId;
+    let governance = Governance.bind(event.address);
+    let apData = governance.abrogationProposals(apId);
 
-    proposal.state = proposalState as string
-    proposal.save()
+    let ap = new AbrogationProposal(apId.toString() + '-AP');
+    ap.creator = event.transaction.from;
+    ap.createTime = event.block.timestamp.toI32();
+    ap.description = apData.value2;
+    ap.forVotes = constants.BIGINT_ZERO;
+    ap.againstVotes = constants.BIGINT_ZERO;
+    ap.save();
+
+    let voter = common.createVoterIfNonExistent(event.transaction.from);
+    voter.proposals += 1;
+    voter.save();
 }
 
 export function handleAbrogationProposalExecuted(event: AbrogationProposalExecuted): void {
@@ -28,7 +37,36 @@ export function handleAbrogationProposalExecuted(event: AbrogationProposalExecut
 }
 
 export function handleAbrogationProposalVote(event: AbrogationProposalVote): void {
+    let apId = event.params.proposalId.toString() + '-AP';
+    let ap = AbrogationProposal.load(apId);
+    let governance = Governance.bind(event.address);
+    let apData = governance.abrogationProposals(event.params.proposalId);
+
+    ap.forVotes = apData.value3;
+    ap.againstVotes = apData.value4;
+    ap.save();
+
+    common.updateVoterOnVote(event.params.user, event.params.power);
+
+    // Once voted, Voter can only change support -> true/false
+    let voteId = apId + '-' + event.params.user.toHex();
+    let vote = VoteCast.load(voteId)
+    if (vote == null) {
+        vote = new VoteCast(voteId);
+        vote.address = event.params.user;
+        vote.voter = event.params.user.toString(); // Map for deriveFrom
+        vote.power = event.params.power;
+        vote.abrogatedProposal = apId;
+    }
+    vote.blockTimestamp = event.block.timestamp;
+    vote.support = event.params.support;
+    vote.save();
+
+
     common.updateVoterOnVote(event.params.user, event.params.power);
 }
 
-export function handleAbrogationProposalVoteCancelled(event: AbrogationProposalVoteCancelled): void { }
+export function handleAbrogationProposalVoteCancelled(event: AbrogationProposalVoteCancelled): void {
+    let voteId = event.params.proposalId.toString() + '-AP-' + event.params.user.toHex();
+    store.remove('Vote', voteId);
+}

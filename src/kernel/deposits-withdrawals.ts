@@ -11,9 +11,8 @@ import {Bytes} from "@graphprotocol/graph-ts";
 import {constants} from "../constants";
 
 export function handleDeposit(event: Deposit): void {
-    let kernel = Kernel.bind(event.address);
     let voter = common.createVoterIfNonExistent(event.params.user);
-    voter.tokensStaked = kernel.balanceOf(event.params.user);
+    voter.tokensStaked = event.params.newBalance;
     voter.save();
 
     if (voter.votingPower.equals(constants.BIGINT_ZERO)) {
@@ -22,9 +21,8 @@ export function handleDeposit(event: Deposit): void {
 }
 
 export function handleWithdraw(event: Withdraw): void {
-    let supernovaContract = Kernel.bind(event.address);
     let voter = common.createVoterIfNonExistent(event.params.user);
-    voter.tokensStaked = supernovaContract.balanceOf(event.params.user);
+    voter.tokensStaked = event.params.amountLeft;
     voter.save();
 
     if (voter.tokensStaked.equals(constants.BIGINT_ZERO) && voter.votingPower.equals(constants.BIGINT_ZERO)) {

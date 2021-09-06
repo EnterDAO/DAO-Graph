@@ -8,7 +8,7 @@ Open the `docker-compose.yml` file and edit the `ethereum` node url you want to 
 
 ## Development
 
-There are `npm scripts` for all of the stages of subgraph development.
+There are `yarn scripts` for all the stages of subgraph development.
 
 1. Building the subgraph (code generation + creating the subgraph): `yarn build`
 2. Deploying the mainnet subgraph on the local graph node: `yarn deploy:local`
@@ -21,7 +21,7 @@ There are `npm scripts` for all of the stages of subgraph development.
 - [X] Get Proposal by ID
 - [X] Get all Votes for a given Proposal ID
 - [X] Get all Events for a given Proposal ID
-- [ ] Get all Voters
-- [ ] Get all Abrogation Proposals
-- [ ] Get Abrogation Proposal by ID
-- [ ] Get Abrogation Proposal Votes by ID
+- [X] Get all Voters - Limited support. `votingPower` is not yet implemented!
+- [X] Get all Abrogation Proposals
+- [X] Get Abrogation Proposal by ID
+- [X] Get Abrogation Proposal Votes by ID

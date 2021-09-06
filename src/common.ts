@@ -27,10 +27,10 @@ export namespace common {
         if (voter == null) {
             voter = new Voter(userAddress.toHex())
             voter.tokensStaked = constants.BIGINT_ZERO;
-            voter.lockedUntil = constants.BIGINT_ZERO;
+            voter.lockedUntil = 0;
             voter.delegatedPower = constants.BIGINT_ZERO;
-            voter.votes = constants.BIGINT_ZERO;
-            voter.proposals = constants.BIGINT_ZERO;
+            voter.votes = 0;
+            voter.proposals = 0;
             voter.votingPower = constants.BIGINT_ZERO;
             voter.hasActiveDelegation = false
             voter.save()
@@ -42,7 +42,7 @@ export namespace common {
         let overview = Overview.load("OVERVIEW");
         if (overview == null) {
             overview = new Overview("OVERVIEW");
-            overview.avgLockTimeSeconds = constants.BIGINT_ZERO;
+            overview.avgLockTimeSeconds = 0;
             // overview.holders = 0;
             overview.totalDelegatedPower = constants.BIGINT_ZERO;
             overview.totalVEntr = constants.BIGINT_ZERO;
@@ -64,10 +64,10 @@ export namespace common {
 
     export function updateVoterOnVote(user: Address, power: BigInt): void {
         let voter = common.createVoterIfNonExistent(user);
-        if (voter.votes.equals(constants.BIGINT_ZERO)) {
+        if (voter.votes == 0) {
             common.incrementVoterCount();
         }
-        voter.votes = voter.votes.plus(BigInt.fromI32(1));
+        voter.votes += 1;
         voter.votingPower = power;
         voter.save();
     }

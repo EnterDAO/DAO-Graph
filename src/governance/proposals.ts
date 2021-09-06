@@ -43,7 +43,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
     proposal.save();
 
     let voter = common.createVoterIfNonExistent(event.transaction.from);
-    voter.proposals = voter.proposals.plus(constants.BIGINT_ONE);
+    voter.proposals += 1;
     voter.save();
 
     common.saveProposalEvent(proposal.id, event, proposalState);
