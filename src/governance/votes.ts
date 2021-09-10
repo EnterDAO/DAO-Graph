@@ -10,7 +10,6 @@ export function handleVote(event: Vote): void {
 
     proposal.forVotes = proposalData.value6;
     proposal.againstVotes = proposalData.value7;
-    proposal.save();
 
     common.updateVoterOnVote(event.params.user);
 
@@ -30,6 +29,7 @@ export function handleVote(event: Vote): void {
     vote.blockTimestamp = event.block.timestamp.toI32();
     vote.support = event.params.support;
     vote.save();
+    proposal.save();
 }
 
 export function handleVoteCanceled(event: VoteCanceled): void {
