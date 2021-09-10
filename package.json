@@ -2,9 +2,10 @@
   "name": "dao-graph",
   "version": "0.1.0",
   "scripts": {
-    "build": "NETWORK=local NO_DEPLOY=true ./deploy.sh",
-    "deploy:mainnet": "NETWORK=mainnet ./deploy.sh",
-    "deploy:local": "NETWORK=local ./deploy.sh"
+    "build": "CONFIG=$npm_config_config GRAPH=local NO_DEPLOY=true ./deploy.sh",
+    "deploy:local": "CONFIG=$npm_config_config GRAPH=local ./deploy.sh",
+    "deploy:rinkeby": "CONFIG=$npm_config_config GRAPH=rinkeby ./deploy.sh",
+    "deploy:mainnet": "CONFIG=$npm_config_config GRAPH=mainnet ./deploy.sh"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.21.1",
