@@ -40,6 +40,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
     proposal.values = proposalActions.value1;
     proposal.signatures = proposalActions.value2;
     proposal.calldatas = proposalActions.value3;
+    proposal.votesCount = 0;
     proposal.save();
 
     let voter = common.createVoterIfNonExistent(event.transaction.from);

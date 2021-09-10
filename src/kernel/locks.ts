@@ -9,14 +9,16 @@ export function handleLock(event: Lock): void {
         voter.lockedUntil : event.block.timestamp.toI32();
 
     // @ts-ignore
-    let kernel = Kernel.bind(event.address);
-    let lockTimestamp = kernel.userLockedUntil(event.transaction.from);
-    voter.lockedUntil = lockTimestamp.toI32();
+    // let kernel = Kernel.bind(event.address);
+    // let lockTimestamp = kernel.userLockedUntil(event.transaction.from);
+    // voter.lockedUntil = lockTimestamp.toI32();
+    voter.lockedUntil = event.params.timestamp.toI32();
     voter.save();
 
     let overview = common.getOverview();
     overview._numberOfLocks = overview._numberOfLocks.plus(constants.BIGINT_ONE);
-    let lockTimeDelta = lockTimestamp.toI32() - startTs;
+    // let lockTimeDelta = lockTimestamp.toI32() - startTs;
+    let lockTimeDelta = event.params.timestamp.toI32() - startTs;
     overview._sumLockTime = overview._sumLockTime.plus(BigInt.fromI32(lockTimeDelta));
     overview.avgLockTimeSeconds = overview._sumLockTime.div(overview._numberOfLocks).toI32();
     overview.save();

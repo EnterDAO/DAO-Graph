@@ -25,8 +25,9 @@ export function handleVote(event: Vote): void {
         vote.proposal = vote.proposalId.toString(); // Map for deriveFrom
         vote.power = event.params.power;
         vote.abrogatedProposal = "";
+        proposal.votesCount += 1;
     }
-    vote.blockTimestamp = event.block.timestamp;
+    vote.blockTimestamp = event.block.timestamp.toI32();
     vote.support = event.params.support;
     vote.save();
 }

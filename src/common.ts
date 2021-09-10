@@ -48,6 +48,7 @@ export namespace common {
             overview.proposals = 0;
             overview._sumLockTime = constants.BIGINT_ZERO;
             overview._numberOfLocks = constants.BIGINT_ZERO;
+            overview._holdersWithNonZeroBalance = 0;
             overview.save();
         }
         return overview as Overview;
@@ -66,6 +67,14 @@ export namespace common {
         }
         voter.votes += 1;
         voter.save();
+    }
+
+    // @ts-ignore
+    export function updateHolders(change: i32): void {
+        let overview = getOverview();
+        overview._holdersWithNonZeroBalance += change;
+        overview.holders = overview.kernelUsers + overview._holdersWithNonZeroBalance;
+        overview.save();
     }
 
     // @ts-ignore

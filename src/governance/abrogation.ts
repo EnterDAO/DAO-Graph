@@ -59,7 +59,7 @@ export function handleAbrogationProposalVote(event: AbrogationProposalVote): voi
         vote.abrogatedProposal = apId;
         vote.proposal = "";
     }
-    vote.blockTimestamp = event.block.timestamp;
+    vote.blockTimestamp = event.block.timestamp.toI32();
     vote.support = event.params.support;
     vote.save();
 }
