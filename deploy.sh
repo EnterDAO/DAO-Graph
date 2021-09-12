@@ -30,10 +30,10 @@ if [[ "$NETWORK" = "local" ]]; then
   GRAPH_NODE="http://127.0.0.1:8020"
 else
   if [ -z "$IPFS_NODE" ]
-    then IPFS_NODE="https://api.thegraph.com/ipfs/"
+    then IPFS_NODE="http://34.116.167.16:5001"
   fi
   if [ -z "$GRAPH_NODE" ]
-    then GRAPH_NODE="https://api.thegraph.com/deploy/"
+    then GRAPH_NODE="http://34.116.167.16:8020"
   fi
 fi
 
