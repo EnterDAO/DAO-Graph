@@ -3,14 +3,7 @@
 # Exit script as soon as a command fails.
 set -o errexit
 
-# Validate network
-networks=(local mainnet)
-if [[ -z $NETWORK || ! " ${networks[@]} " =~ " ${NETWORK} " ]]; then
-  echo 'Please make sure the network provided is either local or mainnet.'
-  exit 1
-fi
-
-mustache config/$NETWORK.json subgraph.template.yaml > subgraph.yaml
+mustache config/$CONFIG subgraph.template.yaml > subgraph.yaml
 
 # Run codegen and build
 graph codegen 
@@ -21,20 +14,19 @@ if [[ "$NO_DEPLOY" = true ]]; then
   exit 0
 fi
 
-# Use custom subgraph name based on target network
-SUBGRAPH_EXT="-${NETWORK}"
-
 # Select IPFS and The Graph nodes
-if [[ "$NETWORK" = "local" ]]; then
+if [ "$GRAPH" == "local" ]
+then
   IPFS_NODE="http://localhost:5001"
   GRAPH_NODE="http://127.0.0.1:8020"
-else
-  if [ -z "$IPFS_NODE" ]
-    then IPFS_NODE="http://34.116.167.16:5001"
-  fi
-  if [ -z "$GRAPH_NODE" ]
-    then GRAPH_NODE="http://34.116.167.16:8020"
-  fi
+elif [ "$GRAPH" == "rinkeby" ]
+then
+  IPFS_NODE="http://34.116.167.16:5001"
+  GRAPH_NODE="http://34.116.167.16:8020"
+elif [ "$GRAPH" = "mainnet" ]
+then
+  IPFS_NODE="http://34.118.119.85:5001"
+  GRAPH_NODE="http://34.118.119.85:8020"
 fi
 
 # Create subgraph if missing

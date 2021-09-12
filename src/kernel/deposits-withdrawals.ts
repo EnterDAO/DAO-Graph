@@ -21,8 +21,8 @@ export function handleWithdraw(event: Withdraw): void {
     voter.tokensStaked = event.params.amountLeft;
     voter.save();
 
-    // // Removed all deposits && does no have delegated power
-    // if (voter.tokensStaked.equals(constants.BIGINT_ZERO) && voter.delegatedPower.equals(constants.BIGINT_ZERO)) {
-    //     common.updateKernelUsers(-1);
-    // }
+    // Removed all deposits && does no have delegated power
+    if (voter.tokensStaked.equals(constants.BIGINT_ZERO) && voter.delegatedPower.equals(constants.BIGINT_ZERO)) {
+        common.updateKernelUsers(-1);
+    }
 }

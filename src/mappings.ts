@@ -11,6 +11,7 @@ import { handleAbrogationProposalStarted,
 import {handleDelegate, handleDelegatedPowerIncreased, handleDelegatedPowerDecreased} from './kernel/delegations';
 import {handleDeposit, handleWithdraw} from './kernel/deposits-withdrawals';
 import {handleLock} from './kernel/locks';
+import {handleTransfer} from "./token/transfers";
 
 /**
  * GOVERNANCE
@@ -49,4 +50,9 @@ export {
     handleDelegate,
     handleDelegatedPowerIncreased,
     handleDelegatedPowerDecreased
+}
+
+/** TOKEN */
+export {
+    handleTransfer
 }

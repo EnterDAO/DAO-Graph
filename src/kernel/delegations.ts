@@ -33,7 +33,7 @@ export function handleDelegatedPowerDecreased(event: DelegatedPowerDecreased): v
     overview.totalDelegatedPower = overview.totalDelegatedPower.minus(event.params.amount);
     overview.save();
 
-    // if (voter.tokensStaked.equals(constants.BIGINT_ZERO) && voter.delegatedPower.equals(constants.BIGINT_ZERO)) {
-    //     common.updateKernelUsers(-1);
-    // }
+    if (voter.tokensStaked.equals(constants.BIGINT_ZERO) && voter.delegatedPower.equals(constants.BIGINT_ZERO)) {
+        common.updateKernelUsers(-1);
+    }
 }

@@ -48,6 +48,7 @@ type Proposal @entity {
   againstVotes: BigInt!
   events: [ProposalStateEvent!]! @derivedFrom(field: "proposal")
   votingHistory: [Vote!]! @derivedFrom(field: "proposal")
+  votesCount: Int!
 }
 
 # The entity is created each time a proposal event occurs.
@@ -105,7 +106,7 @@ type Vote @entity {
   "The address of the voter"
   address: Bytes!
   proposalId: BigInt!
-  blockTimestamp: BigInt!
+  blockTimestamp: Int!
   power: BigInt!
   support: Boolean!
   proposal: Proposal! # Used for derivedFrom
@@ -117,8 +118,8 @@ type Overview @entity {
   id: ID!
   "Average lock time"
   avgLockTimeSeconds: Int!
-  "Total number of holders"
-  holders: Int! # TODO not yet calculated
+  "Total number of holders. Includes addresses with balance 0 in their address, but have staked it in the Kernel"
+  holders: Int!
   "Total delegated power"
   totalDelegatedPower: BigInt!
   "Number of voters"
@@ -131,6 +132,8 @@ type Overview @entity {
   _sumLockTime: BigInt!
   "Used to efficiently calculate avgLockTimeSeconds"
   _numberOfLocks: BigInt!
+  "Addresses that have non-zero token balance"
+  _holdersWithNonZeroBalance: Int!
 }
 
 type AbrogationProposal @entity {

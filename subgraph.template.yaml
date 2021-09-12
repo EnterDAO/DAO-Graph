@@ -5,6 +5,26 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
+    name: Token
+    network: {{network}}
+    source:
+      address: '{{Token}}'
+      abi: Token
+      startBlock: {{startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Overview
+      abis:
+        - name: Token
+          file: ./abis/Token.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mappings.ts
+  - kind: ethereum/contract
     name: Staking
     network: {{network}}
     source:
@@ -28,7 +48,6 @@ dataSources:
         - event: Withdraw(indexed address,indexed address,uint256)
           handler: handleWithdraw
       file: ./src/staking/mapping.ts
-  
   - kind: ethereum/contract
     name: Kernel
     network: {{network}}
@@ -55,7 +74,7 @@ dataSources:
         - event: Lock(indexed address,uint256)
           handler: handleLock
         - event: Delegate(indexed address,indexed address)
-          handler: handleLock
+          handler: handleDelegate
         - event: DelegatedPowerIncreased(indexed address,indexed address,uint256,uint256)
           handler: handleDelegatedPowerIncreased
         - event: DelegatedPowerDecreased(indexed address,indexed address,uint256,uint256)
