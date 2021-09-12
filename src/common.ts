@@ -1,4 +1,4 @@
-import {Overview, ProposalStateEvent, Voter} from "../generated/schema";
+import {Holder, Overview, ProposalStateEvent, Voter} from "../generated/schema";
 import {Address, Bytes, ethereum } from "@graphprotocol/graph-ts";
 import {constants} from "./constants";
 
@@ -31,6 +31,7 @@ export namespace common {
             voter.votes = 0;
             voter.proposals = 0;
             voter.hasActiveDelegation = false
+            voter._tokensStakedWithoutDecimals = 0;
             voter.save()
         }
         return voter as Voter
@@ -67,6 +68,16 @@ export namespace common {
         }
         voter.votes += 1;
         voter.save();
+    }
+
+    export function getOrCreateHolder(address: Address): Holder {
+        let holder = Holder.load(address.toHex());
+        if (holder == null) {
+            holder = new Holder(address.toHex());
+            holder.balance = constants.BIGINT_ZERO;
+            holder.save();
+        }
+        return holder as Holder;
     }
 
     // @ts-ignore
