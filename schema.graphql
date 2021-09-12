@@ -96,8 +96,10 @@ type Voter @entity {
   "Number of proposals created by this address"
   proposals: Int!
   "Whether or not the address delegated "
-  hasActiveDelegation: Boolean! # TODO bug in the calculation
+  hasActiveDelegation: Boolean!
   votingHistory: [Vote!]! @derivedFrom(field: "voter")
+  "Used to efficiently query voters by voting power"
+  _tokensStakedWithoutDecimals: Int!
 }
 
 type Vote @entity {
@@ -109,6 +111,8 @@ type Vote @entity {
   blockTimestamp: Int!
   power: BigInt!
   support: Boolean!
+  "Used to efficiently votes by power"
+  _powerWithoutDecimals: Int!
   proposal: Proposal! # Used for derivedFrom
   abrogatedProposal: AbrogationProposal! # Used for derivedFrom
   voter: Voter! # Used for derivedFrom
@@ -119,7 +123,7 @@ type Overview @entity {
   "Average lock time"
   avgLockTimeSeconds: Int!
   "Total number of holders. Includes addresses with balance 0 in their address, but have staked it in the Kernel"
-  holders: Int!
+  holders: Int! # TODO it seems that there is a bug with this prop
   "Total delegated power"
   totalDelegatedPower: BigInt!
   "Number of voters"
@@ -146,5 +150,12 @@ type AbrogationProposal @entity {
   description: String!
   forVotes: BigInt!
   againstVotes: BigInt!
+  votesCount: Int!
   votingHistory: [Vote!]! @derivedFrom(field: "abrogatedProposal")
+}
+
+type Holder @entity {
+  "Address of the holder"
+  id: ID!
+  balance: BigInt!
 }

@@ -5,7 +5,7 @@ import {constants} from "../constants";
 
 export function handleDelegate(event: Delegate): void {
     let voter = common.createVoterIfNonExistent(event.params.from);
-    voter.hasActiveDelegation = !event.params.to.equals(Address.fromHexString('0x0000000000000000000000000000000000000000'));
+    voter.hasActiveDelegation = !event.params.to.equals(constants.ZERO_ADDRESS);
     voter.save();
 }
 

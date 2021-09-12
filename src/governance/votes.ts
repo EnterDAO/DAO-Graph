@@ -2,6 +2,7 @@ import {Governance, Vote, VoteCanceled} from "../../generated/Governance/Governa
 import {Proposal, Vote as VoteCast } from "../../generated/schema";
 import {store} from "@graphprotocol/graph-ts";
 import {common} from "../common";
+import {constants} from "../constants";
 
 export function handleVote(event: Vote): void {
     let proposal = Proposal.load(event.params.proposalId.toString());
@@ -24,6 +25,7 @@ export function handleVote(event: Vote): void {
         vote.proposal = vote.proposalId.toString(); // Map for deriveFrom
         vote.power = event.params.power;
         vote.abrogatedProposal = "";
+        vote._powerWithoutDecimals = (event.params.power.div(constants.TEN_TO_THE_EIGHTEEN)).toI32();
         proposal.votesCount += 1;
     }
     vote.blockTimestamp = event.block.timestamp.toI32();
