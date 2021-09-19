@@ -27,6 +27,10 @@ elif [ "$GRAPH" = "mainnet" ]
 then
   IPFS_NODE="http://34.118.119.85:5001"
   GRAPH_NODE="http://34.118.119.85:8020"
+elif [ "$GRAPH" = "mainnet-remote" ]
+then
+  IPFS_NODE="https://api.thegraph.com/ipfs/"
+  GRAPH_NODE="https://api.thegraph.com/deploy/"
 fi
 
 # Create subgraph if missing
