@@ -46,6 +46,10 @@ type Proposal @entity {
   forVotes: BigInt!
   "Should be accounted in BigInt, but saved as String due to how the UI expects"
   againstVotes: BigInt!
+  "Number of voters that voted for"
+  forVotesCount: Int!
+  "Number of voters that voted against"
+  againstVotesCount: Int!
   events: [ProposalStateEvent!]! @derivedFrom(field: "proposal")
   votingHistory: [Vote!]! @derivedFrom(field: "proposal")
   votesCount: Int!
@@ -151,6 +155,10 @@ type AbrogationProposal @entity {
   forVotes: BigInt!
   againstVotes: BigInt!
   votesCount: Int!
+  "Number of voters that voted for"
+  forVotesCount: Int!
+  "Number of voters that voted against"
+  againstVotesCount: Int!
   votingHistory: [Vote!]! @derivedFrom(field: "abrogatedProposal")
 }
 

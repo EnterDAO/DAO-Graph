@@ -16,15 +16,15 @@ export namespace common {
         psh.caller = event.transaction.from;
         psh.eventType = eventType;
         psh.createTime = event.block.timestamp.toI32();
-        psh.txHash = event.transaction.hash.toHex();
+        psh.txHash = event.transaction.hash.toHexString();
         psh.eta = eta;
         psh.save()
     }
 
     export function createVoterIfNonExistent(userAddress: Bytes): Voter {
-        let voter = Voter.load(userAddress.toHex())
+        let voter = Voter.load(userAddress.toHexString())
         if (voter == null) {
-            voter = new Voter(userAddress.toHex())
+            voter = new Voter(userAddress.toHexString())
             voter.tokensStaked = constants.BIGINT_ZERO;
             voter.lockedUntil = 0;
             voter.delegatedPower = constants.BIGINT_ZERO;
@@ -71,9 +71,9 @@ export namespace common {
     }
 
     export function getOrCreateHolder(address: Address): Holder {
-        let holder = Holder.load(address.toHex());
+        let holder = Holder.load(address.toHexString());
         if (holder == null) {
-            holder = new Holder(address.toHex());
+            holder = new Holder(address.toHexString());
             holder.balance = constants.BIGINT_ZERO;
             holder.save();
         }

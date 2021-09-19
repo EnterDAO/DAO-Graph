@@ -21,6 +21,8 @@ export function handleAbrogationProposalStarted(event: AbrogationProposalStarted
     ap.forVotes = constants.BIGINT_ZERO;
     ap.againstVotes = constants.BIGINT_ZERO;
     ap.votesCount = 0;
+    ap.forVotesCount = 0;
+    ap.againstVotesCount = 0;
     ap.save();
 
     let voter = common.createVoterIfNonExistent(event.transaction.from);
@@ -49,7 +51,7 @@ export function handleAbrogationProposalVote(event: AbrogationProposalVote): voi
     common.updateVoterOnVote(event.params.user);
 
     // Once voted, Voter can only change support -> true/false
-    let voteId = apId + '-' + event.params.user.toHex();
+    let voteId = apId + '-' + event.params.user.toHexString();
     let vote = VoteCast.load(voteId)
     if (vote == null) {
         vote = new VoteCast(voteId);
@@ -61,14 +63,27 @@ export function handleAbrogationProposalVote(event: AbrogationProposalVote): voi
         vote.proposalId = event.params.proposalId;
         vote._powerWithoutDecimals = (event.params.power.div(constants.TEN_TO_THE_EIGHTEEN)).toI32();
         ap.votesCount += 1;
+    } else {
+        // User changed vote. We must remvoe previously accounted votes
+        if (event.params.support) {
+            ap.againstVotesCount -= 1;
+        } else {
+            ap.forVotesCount -= 1;
+        }
     }
     vote.blockTimestamp = event.block.timestamp.toI32();
     vote.support = event.params.support;
     vote.save();
+
+    if (vote.support) {
+        ap.forVotesCount += 1;
+    } else {
+        ap.againstVotesCount += 1;
+    }
     ap.save();
 }
 
 export function handleAbrogationProposalVoteCancelled(event: AbrogationProposalVoteCancelled): void {
-    let voteId = event.params.proposalId.toString() + '-AP-' + event.params.user.toHex();
+    let voteId = event.params.proposalId.toString() + '-AP-' + event.params.user.toHexString();
     store.remove('Vote', voteId);
 }

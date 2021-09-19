@@ -11,12 +11,12 @@ function saveTransaction(
   amount: BigInt,
   blockTimestamp: BigInt
 ): void {
-  let txn = new Transaction(txHash.toHex() + '-' + logIndex.toString())
+  let txn = new Transaction(txHash.toHexString() + '-' + logIndex.toString())
   txn.actionType = actionType
   txn.tokenAddress = tokenAddress
   txn.userAddress = userAddress
   txn.amount = amount
-  txn.transactionHash = txHash.toHex()
+  txn.transactionHash = txHash.toHexString()
   txn.blockTimestamp = blockTimestamp
   txn.save()
 

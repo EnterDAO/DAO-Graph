@@ -15,7 +15,7 @@ export function handleVote(event: Vote): void {
     common.updateVoterOnVote(event.params.user);
 
     // Once voted, Voter can only change support -> true/false
-    let voteId = event.params.proposalId.toString() + '-' + event.params.user.toHex();
+    let voteId = event.params.proposalId.toString() + '-' + event.params.user.toHexString();
     let vote = VoteCast.load(voteId)
     if (vote == null) {
         vote = new VoteCast(voteId);
@@ -27,15 +27,28 @@ export function handleVote(event: Vote): void {
         vote.abrogatedProposal = "";
         vote._powerWithoutDecimals = (event.params.power.div(constants.TEN_TO_THE_EIGHTEEN)).toI32();
         proposal.votesCount += 1;
+    } else {
+        // User changed vote. We must remvoe previously accounted votes
+        if (event.params.support) {
+            proposal.againstVotesCount -= 1;
+        } else {
+            proposal.forVotesCount -= 1;
+        }
     }
     vote.blockTimestamp = event.block.timestamp.toI32();
     vote.support = event.params.support;
     vote.save();
+
+    if (vote.support) {
+        proposal.forVotesCount += 1;
+    } else {
+        proposal.againstVotesCount += 1;
+    }
     proposal.save();
 }
 
 export function handleVoteCanceled(event: VoteCanceled): void {
-    let voteId = event.params.proposalId.toString() + '-' + event.params.user.toHex();
+    let voteId = event.params.proposalId.toString() + '-' + event.params.user.toHexString();
     store.remove('Vote', voteId);
 }
 
