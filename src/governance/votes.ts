@@ -2,6 +2,7 @@ import {Governance, Vote, VoteCanceled} from "../../generated/Governance/Governa
 import {Proposal, Vote as VoteCast } from "../../generated/schema";
 import {store} from "@graphprotocol/graph-ts";
 import {common} from "../common";
+import {constants} from "../constants";
 
 export function handleVote(event: Vote): void {
     let proposal = Proposal.load(event.params.proposalId.toString());
@@ -14,7 +15,7 @@ export function handleVote(event: Vote): void {
     common.updateVoterOnVote(event.params.user);
 
     // Once voted, Voter can only change support -> true/false
-    let voteId = event.params.proposalId.toString() + '-' + event.params.user.toHex();
+    let voteId = event.params.proposalId.toString() + '-' + event.params.user.toHexString();
     let vote = VoteCast.load(voteId)
     if (vote == null) {
         vote = new VoteCast(voteId);
@@ -24,16 +25,30 @@ export function handleVote(event: Vote): void {
         vote.proposal = vote.proposalId.toString(); // Map for deriveFrom
         vote.power = event.params.power;
         vote.abrogatedProposal = "";
+        vote._powerWithoutDecimals = (event.params.power.div(constants.TEN_TO_THE_EIGHTEEN)).toI32();
         proposal.votesCount += 1;
+    } else {
+        // User changed vote. We must remvoe previously accounted votes
+        if (event.params.support) {
+            proposal.againstVotesCount -= 1;
+        } else {
+            proposal.forVotesCount -= 1;
+        }
     }
     vote.blockTimestamp = event.block.timestamp.toI32();
     vote.support = event.params.support;
     vote.save();
+
+    if (vote.support) {
+        proposal.forVotesCount += 1;
+    } else {
+        proposal.againstVotesCount += 1;
+    }
     proposal.save();
 }
 
 export function handleVoteCanceled(event: VoteCanceled): void {
-    let voteId = event.params.proposalId.toString() + '-' + event.params.user.toHex();
+    let voteId = event.params.proposalId.toString() + '-' + event.params.user.toHexString();
     store.remove('Vote', voteId);
 }
 

@@ -1,4 +1,4 @@
-import {Overview, ProposalStateEvent, Voter} from "../generated/schema";
+import {Holder, Overview, ProposalStateEvent, Voter} from "../generated/schema";
 import {Address, Bytes, ethereum } from "@graphprotocol/graph-ts";
 import {constants} from "./constants";
 
@@ -16,21 +16,23 @@ export namespace common {
         psh.caller = event.transaction.from;
         psh.eventType = eventType;
         psh.createTime = event.block.timestamp.toI32();
-        psh.txHash = event.transaction.hash.toHex();
+        psh.txHash = event.transaction.hash.toHexString();
         psh.eta = eta;
         psh.save()
     }
 
     export function createVoterIfNonExistent(userAddress: Bytes): Voter {
-        let voter = Voter.load(userAddress.toHex())
+        let voter = Voter.load(userAddress.toHexString())
         if (voter == null) {
-            voter = new Voter(userAddress.toHex())
+            voter = new Voter(userAddress.toHexString())
             voter.tokensStaked = constants.BIGINT_ZERO;
             voter.lockedUntil = 0;
             voter.delegatedPower = constants.BIGINT_ZERO;
             voter.votes = 0;
             voter.proposals = 0;
             voter.hasActiveDelegation = false
+            voter._tokensStakedWithoutDecimals = 0;
+            voter.isKernelUser = false;
             voter.save()
         }
         return voter as Voter
@@ -67,6 +69,16 @@ export namespace common {
         }
         voter.votes += 1;
         voter.save();
+    }
+
+    export function getOrCreateHolder(address: Address): Holder {
+        let holder = Holder.load(address.toHexString());
+        if (holder == null) {
+            holder = new Holder(address.toHexString());
+            holder.balance = constants.BIGINT_ZERO;
+            holder.save();
+        }
+        return holder as Holder;
     }
 
     // @ts-ignore
