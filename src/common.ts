@@ -32,6 +32,7 @@ export namespace common {
             voter.proposals = 0;
             voter.hasActiveDelegation = false
             voter._tokensStakedWithoutDecimals = 0;
+            voter.isKernelUser = false;
             voter.save()
         }
         return voter as Voter

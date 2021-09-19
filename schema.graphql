@@ -101,8 +101,10 @@ type Voter @entity {
   proposals: Int!
   "Whether or not the address delegated "
   hasActiveDelegation: Boolean!
+  "Whether the account is currently a kernel user"
+  isKernelUser: Boolean!
   votingHistory: [Vote!]! @derivedFrom(field: "voter")
-  "Used to efficiently query voters by voting power"
+  "Used to efficiently query voters sorted by staked tokens"
   _tokensStakedWithoutDecimals: Int!
 }
 
