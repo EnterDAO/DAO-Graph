@@ -29,19 +29,21 @@ then
   GRAPH_NODE="http://34.118.119.85:8020"
 elif [ "$GRAPH" = "mainnet-remote" ]
 then
-  IPFS_NODE="https://api.thegraph.com/ipfs/"
-  GRAPH_NODE="https://api.thegraph.com/deploy/"
+  graph deploy --studio enterdao
+  # Remove manifest
+  rm subgraph.yaml
+  exit 0
 fi
 
 # Create subgraph if missing
 {
-  graph create enterdao/DAO-Graph --node ${GRAPH_NODE}
+  graph create enterdao/DAO-Governance-Graph --node ${GRAPH_NODE}
 } || {
   echo 'Subgraph was already created'
 }
 
 # Deploy subgraph
-graph deploy enterdao/DAO-Graph --ipfs ${IPFS_NODE} --node ${GRAPH_NODE}
+graph deploy enterdao/DAO-Governance-Graph --ipfs ${IPFS_NODE} --node ${GRAPH_NODE}
 
 # Remove manifest
 rm subgraph.yaml
