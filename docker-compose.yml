@@ -19,7 +19,7 @@ services:
       postgres_db: graph-node
       ipfs: 'ipfs:5001'
       # Change next line if you want to connect to a different JSON-RPC endpoint
-      ethereum: 'mainnet:https://mainnet.infura.io/v3/7e57377831c641069386f9b808e5f8d7'
+      ethereum: 'mainnet:https://mainnet.infura.io/v3/{INFURA_PROJECT_ID}'
       GRAPH_LOG: info
   ipfs:
     image: ipfs/go-ipfs:v0.4.23
