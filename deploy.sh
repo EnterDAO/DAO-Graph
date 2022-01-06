@@ -6,7 +6,7 @@ set -o errexit
 mustache config/$CONFIG subgraph.template.yaml > subgraph.yaml
 
 # Run codegen and build
-graph codegen 
+graph codegen
 graph build
 
 if [[ "$NO_DEPLOY" = true ]]; then
@@ -27,6 +27,12 @@ elif [ "$GRAPH" = "mainnet" ]
 then
   IPFS_NODE="http://{GRAPH_IPFS_NODE_IP}:5001"
   GRAPH_NODE="http://{GRAPH_NODE_IP}:8020"
+elif [ "$GRAPH" = "mainnet-hosted" ]
+then
+  graph deploy --product hosted-service enterdao/daosubgraph
+  # Remove manifest
+  rm subgraph.yaml
+  exit 0
 elif [ "$GRAPH" = "mainnet-remote" ]
 then
   graph deploy --studio enterdao

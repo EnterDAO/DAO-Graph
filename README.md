@@ -14,6 +14,8 @@ There are `npm scripts` for all the stages of subgraph development.
 2. Deploying to the Local Graph Node: `npm run deploy:local --config={config.json}`
 3. Deploying to the Rinkeby Graph Node: `npm run deploy:rinkeby --config={config.json`
 4. Deploying to the Mainnet Graph Node: `npm run deploy:mainnet --config={config.json}`
+5. Deploying to the Mainnet-Hosted Graph Node: `npm run deploy:mainnet-hosted --config={config.json}`
+
 Where `{config.json}` is the file name of the config you want to deploy. F.e if you want to deploy locally the mainnet config execute: `npm run deploy:local --config=mainnet.json`
 
 ## Supported APIs
