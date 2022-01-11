@@ -1,7 +1,7 @@
-import { BigInt, Bytes } from '@graphprotocol/graph-ts'
 import { Staked, Withdrawn } from '../../../generated/LandWorksDecentralandStaking/LandWorksDecentralandStaking'
-import { Transaction, TransactionCount } from '../../../generated/schema';
 import { common } from '../../common';
+import { constants } from '../../constants';
+import BIGINT_ZERO = constants.BIGINT_ZERO;
 
 export function handleStaked(event: Staked): void {
   common.saveTransaction(
@@ -10,7 +10,7 @@ export function handleStaked(event: Staked): void {
     'DEPOSIT',
     event.address, // Тhe address of the Staking Contract -> has to be mapped to LandWorks contract
     event.params.user,
-    event.params.amount, // The ENTR amount based on tokenIds
+    BIGINT_ZERO,
     event.block.timestamp,
     event.params.tokenIds, // The staked tokenIds
   )
@@ -25,7 +25,7 @@ export function handleWithdrawn(event: Withdrawn): void {
     'WITHDRAW',
     event.address, // Тhe address of the Staking Contract -> has to be mapped to LandWorks contract
     event.params.user,
-    event.params.amount,  // The ENTR amount based on tokenIds
+    BIGINT_ZERO,
     event.block.timestamp,
     event.params.tokenIds, // The staked tokenIds
   )
