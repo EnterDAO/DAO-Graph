@@ -1,5 +1,5 @@
-import {Holder, Overview, ProposalStateEvent, Voter} from "../generated/schema";
-import {Address, Bytes, ethereum } from "@graphprotocol/graph-ts";
+import { Holder, Overview, ProposalStateEvent, Transaction, TransactionCount, Voter } from '../generated/schema';
+import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import {constants} from "./constants";
 
 export namespace common {
@@ -94,6 +94,45 @@ export namespace common {
         let overview = getOverview();
         overview.kernelUsers += change;
         overview.save();
+    }
+
+    export function incrementTransactionsCount(type: string): void {
+        let transactionsCount = TransactionCount.load(type)
+        if (transactionsCount == null) {
+            transactionsCount = new TransactionCount(type)
+            transactionsCount.count = BigInt.fromI32(0)
+        }
+        transactionsCount.count = transactionsCount.count.plus(BigInt.fromI32(1))
+        transactionsCount.save()
+    }
+
+    export function saveTransaction(
+      txHash: Bytes,
+      logIndex: BigInt,
+      actionType: string,
+      tokenAddress: Bytes,
+      userAddress: Bytes,
+      amount: BigInt,
+      blockTimestamp: BigInt,
+      tokenIds: Array<BigInt> | null,
+    ): void {
+        let txn = new Transaction(txHash.toHexString() + '-' + logIndex.toString())
+        txn.actionType = actionType
+        txn.tokenAddress = tokenAddress
+        txn.userAddress = userAddress
+        txn.amount = amount
+        txn.transactionHash = txHash.toHexString()
+        txn.blockTimestamp = blockTimestamp
+        txn.tokenIds = tokenIds
+        txn.save()
+
+        let allTransactions = TransactionCount.load('all')
+        if (allTransactions == null) {
+            allTransactions = new TransactionCount('all')
+            allTransactions.count = BigInt.fromI32(0)
+        }
+        allTransactions.count = allTransactions.count.plus(BigInt.fromI32(1))
+        allTransactions.save()
     }
 }
 

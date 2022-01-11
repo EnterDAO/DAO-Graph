@@ -63,3 +63,6 @@ typings/
 /generated/
 /build/
 /data
+
+# IntelliJ IDEA
+.idea

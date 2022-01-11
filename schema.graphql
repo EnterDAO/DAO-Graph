@@ -11,6 +11,7 @@ type Transaction @entity {
   amount: BigInt!
   blockTimestamp: BigInt!
   transactionHash: String!
+  tokenIds: [BigInt!]
 }
 
 type TransactionCount @entity {

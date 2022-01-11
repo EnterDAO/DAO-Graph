@@ -121,3 +121,26 @@ dataSources:
         - event: AbrogationProposalVoteCancelled(indexed uint256,indexed address)
           handler: handleAbrogationProposalVoteCancelled
       file: ./src/mappings.ts
+  - kind: ethereum/contract
+    name: LandWorksDecentralandStaking
+    network: {{network}}
+    source:
+      address: '{{LandWorksDecentralandStaking}}'
+      abi: LandWorksDecentralandStaking
+      startBlock: {{startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - TransactionCount
+      abis:
+        - name: LandWorksDecentralandStaking
+          file: ./abis/LandWorksDecentralandStaking.json
+      eventHandlers:
+        - event: Staked(indexed address,uint256,uint256[])
+          handler: handleStaked
+        - event: Withdrawn(indexed address,uint256,uint256[])
+          handler: handleWithdrawn
+      file: ./src/staking/land-works/mapping.ts
