@@ -1,5 +1,5 @@
-import {Holder, Overview, ProposalStateEvent, Voter} from "../generated/schema";
-import {Address, Bytes, ethereum } from "@graphprotocol/graph-ts";
+import { Holder, Overview, ProposalStateEvent, TransactionCount, Voter } from '../generated/schema';
+import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import {constants} from "./constants";
 
 export namespace common {
@@ -94,6 +94,16 @@ export namespace common {
         let overview = getOverview();
         overview.kernelUsers += change;
         overview.save();
+    }
+
+    export function incrementTransactionsCount(type: string): void {
+        let transactionsCount = TransactionCount.load(type)
+        if (transactionsCount == null) {
+            transactionsCount = new TransactionCount(type)
+            transactionsCount.count = BigInt.fromI32(0)
+        }
+        transactionsCount.count = transactionsCount.count.plus(BigInt.fromI32(1))
+        transactionsCount.save()
     }
 }
 

@@ -1,7 +1,7 @@
 import { BigInt, Bytes } from '@graphprotocol/graph-ts'
-import { Deposit, Withdraw } from '../../generated/Staking/Staking'
-import { Transaction, TransactionCount } from '../../generated/schema'
-import { common } from '../common';
+import { Staked, Withdrawn } from '../../../generated/LandWorksDecentralandStaking/LandWorksDecentralandStaking'
+import { Transaction, TransactionCount } from '../../../generated/schema';
+import { common } from '../../common';
 
 function saveTransaction(
   txHash: Bytes,
@@ -10,7 +10,8 @@ function saveTransaction(
   tokenAddress: Bytes,
   userAddress: Bytes,
   amount: BigInt,
-  blockTimestamp: BigInt
+  blockTimestamp: BigInt,
+  tokenIds: BigInt[],
 ): void {
   let txn = new Transaction(txHash.toHexString() + '-' + logIndex.toString())
   txn.actionType = actionType
@@ -19,6 +20,7 @@ function saveTransaction(
   txn.amount = amount
   txn.transactionHash = txHash.toHexString()
   txn.blockTimestamp = blockTimestamp
+  txn.tokenIds = tokenIds
   txn.save()
 
   let allTransactions = TransactionCount.load('all')
@@ -30,29 +32,31 @@ function saveTransaction(
   allTransactions.save()
 }
 
-export function handleDeposit(event: Deposit): void {
+export function handleStaked(event: Staked): void {
   saveTransaction(
     event.transaction.hash,
     event.logIndex,
     'DEPOSIT',
-    event.params.tokenAddress,
+    event.address, // Тhe address of the Staking Contract -> has to be mapped to LandWorks contract
     event.params.user,
-    event.params.amount,
-    event.block.timestamp
+    event.params.amount, // The ENTR amount based on tokenIds
+    event.block.timestamp,
+    event.params.tokenIds, // The staked tokenIds
   )
 
   common.incrementTransactionsCount('DEPOSIT')
 }
 
-export function handleWithdraw(event: Withdraw): void {
+export function handleWithdrawn(event: Withdrawn): void {
   saveTransaction(
     event.transaction.hash,
     event.logIndex,
     'WITHDRAW',
-    event.params.tokenAddress,
+    event.address, // Тhe address of the Staking Contract -> has to be mapped to LandWorks contract
     event.params.user,
-    event.params.amount,
-    event.block.timestamp
+    event.params.amount,  // The ENTR amount based on tokenIds
+    event.block.timestamp,
+    event.params.tokenIds, // The staked tokenIds
   )
 
   common.incrementTransactionsCount('WITHDRAW')
