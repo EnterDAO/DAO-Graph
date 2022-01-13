@@ -1,7 +1,9 @@
-import { Staked, Withdrawn } from '../../../generated/LandWorksDecentralandStaking/LandWorksDecentralandStaking'
+import { Staked, Withdrawn } from '../../../generated/LandWorksDecentralandStaking/LandWorksDecentralandStaking';
 import { common } from '../../common';
 import { constants } from '../../constants';
-import BIGINT_ZERO = constants.BIGINT_ZERO;
+import { ERC721StakedToken } from '../../../generated/schema';
+import { BigInt, log } from '@graphprotocol/graph-ts/index';
+import { Address, Bytes, store } from '@graphprotocol/graph-ts';
 
 export function handleStaked(event: Staked): void {
   common.saveTransaction(
@@ -10,12 +12,29 @@ export function handleStaked(event: Staked): void {
     'DEPOSIT',
     event.address, // Тhe address of the Staking Contract -> has to be mapped to LandWorks contract
     event.params.user,
-    BIGINT_ZERO,
+    constants.BIGINT_ZERO,
     event.block.timestamp,
-    event.params.tokenIds, // The staked tokenIds
-  )
+    event.params.tokenIds // The staked tokenIds
+  );
 
-  common.incrementTransactionsCount('DEPOSIT')
+  let tokenIds: Array<BigInt> = event.params.tokenIds;
+
+  for (let i = 0; i < tokenIds.length; i++) {
+    let token: BigInt = tokenIds[i];
+
+    let id = token.toString() + '-' + event.address.toHexString();
+    let stakedToken = ERC721StakedToken.load(id);
+
+    if (stakedToken == null) {
+      stakedToken = new ERC721StakedToken(id);
+      stakedToken.tokenId = token;
+      stakedToken.contract = event.address;
+      stakedToken.owner = event.params.user;
+      stakedToken.save();
+    }
+  }
+
+  common.incrementTransactionsCount('DEPOSIT');
 }
 
 export function handleWithdrawn(event: Withdrawn): void {
@@ -25,10 +44,15 @@ export function handleWithdrawn(event: Withdrawn): void {
     'WITHDRAW',
     event.address, // Тhe address of the Staking Contract -> has to be mapped to LandWorks contract
     event.params.user,
-    BIGINT_ZERO,
+    constants.BIGINT_ZERO,
     event.block.timestamp,
-    event.params.tokenIds, // The staked tokenIds
-  )
+    event.params.tokenIds // The staked tokenIds
+  );
 
-  common.incrementTransactionsCount('WITHDRAW')
+  event.params.tokenIds.forEach((tokenId, index) => {
+    let id = tokenId.toString() + '-' + event.address.toHexString();
+    store.remove('ERC721StakedToken', id);
+  });
+
+  common.incrementTransactionsCount('WITHDRAW');
 }
