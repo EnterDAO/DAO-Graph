@@ -1,9 +1,9 @@
-import { Staked, Withdrawn } from '../../../generated/LandWorksDecentralandStaking/LandWorksDecentralandStaking'
+import { Staked, Withdrawn } from '../../../generated/LandWorksDecentralandStaking/LandWorksDecentralandStaking';
 import { common } from '../../common';
 import { constants } from '../../constants';
-import { ERC721StakedToken, TransactionCount } from '../../../generated/schema';
+import { ERC721StakedToken } from '../../../generated/schema';
 import { BigInt } from '@graphprotocol/graph-ts/index';
-import { Address, Bytes } from '@graphprotocol/graph-ts';
+import { Address, Bytes, store } from '@graphprotocol/graph-ts';
 
 export function handleStaked(event: Staked): void {
   common.saveTransaction(
@@ -14,16 +14,14 @@ export function handleStaked(event: Staked): void {
     event.params.user,
     constants.BIGINT_ZERO,
     event.block.timestamp,
-    event.params.tokenIds, // The staked tokenIds
-  )
+    event.params.tokenIds // The staked tokenIds
+  );
 
   event.params.tokenIds.forEach((tokenId, index) => {
-    let stakedToken = createStakedTokenIfNotExistent(tokenId, event.address)
-    stakedToken.owner = event.params.user
-    stakedToken.save()
-  })
+    createStakedTokenIfNotExistent(tokenId, event.address, event.params.user);
+  });
 
-  common.incrementTransactionsCount('DEPOSIT')
+  common.incrementTransactionsCount('DEPOSIT');
 }
 
 export function handleWithdrawn(event: Withdrawn): void {
@@ -35,27 +33,25 @@ export function handleWithdrawn(event: Withdrawn): void {
     event.params.user,
     constants.BIGINT_ZERO,
     event.block.timestamp,
-    event.params.tokenIds, // The staked tokenIds
-  )
+    event.params.tokenIds // The staked tokenIds
+  );
 
   event.params.tokenIds.forEach((tokenId, index) => {
-    let stakedToken = createStakedTokenIfNotExistent(tokenId, event.address)
-    stakedToken.owner = constants.ZERO_ADDRESS as Bytes
-    stakedToken.save()
-  })
+    let id = tokenId.toString() + '-' + event.address.toHexString();
+    store.remove('ERC721StakedToken', id);
+  });
 
-  common.incrementTransactionsCount('WITHDRAW')
+  common.incrementTransactionsCount('WITHDRAW');
 }
 
-function createStakedTokenIfNotExistent(tokenId: BigInt, address: Address): ERC721StakedToken {
-  let id = tokenId.toString() + '-' + address.toHexString()
-  let stakedToken = ERC721StakedToken.load(id)
+function createStakedTokenIfNotExistent(tokenId: BigInt, address: Address, owner: Bytes): void {
+  let id = tokenId.toString() + '-' + address.toHexString();
+  let stakedToken = ERC721StakedToken.load(id);
   if (stakedToken == null) {
-    stakedToken = new ERC721StakedToken(id)
-    stakedToken.tokenId = tokenId
-    stakedToken.contract = address
-    stakedToken.save()
+    stakedToken = new ERC721StakedToken(id);
+    stakedToken.tokenId = tokenId;
+    stakedToken.contract = address;
+    stakedToken.owner = owner;
+    stakedToken.save();
   }
-
-  return stakedToken as ERC721StakedToken
 }
