@@ -170,3 +170,14 @@ type Holder @entity {
   id: ID!
   balance: BigInt!
 }
+
+type ERC721StakedToken @entity {
+  "The ID is generated: {tokenID}-{contractAddress}"
+  id: ID!
+  "The tokenId"
+  tokenId: BigInt!
+  "The contract address of the ERC-721"
+  contract: Bytes!
+  "Staked owner of the ERC-721"
+  owner: Bytes!
+}
