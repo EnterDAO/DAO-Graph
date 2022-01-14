@@ -16,9 +16,9 @@ export function handleStaked(event: Staked): void {
     event.block.timestamp,
     event.params.tokenIds // The staked tokenIds
   );
+  common.incrementTransactionsCount('DEPOSIT');
 
   let tokenIds: Array<BigInt> = event.params.tokenIds;
-
   for (let i = 0; i < tokenIds.length; i++) {
     let token: BigInt = tokenIds[i];
 
@@ -33,8 +33,6 @@ export function handleStaked(event: Staked): void {
       stakedToken.save();
     }
   }
-
-  common.incrementTransactionsCount('DEPOSIT');
 }
 
 export function handleWithdrawn(event: Withdrawn): void {
@@ -48,11 +46,13 @@ export function handleWithdrawn(event: Withdrawn): void {
     event.block.timestamp,
     event.params.tokenIds // The staked tokenIds
   );
-
-  event.params.tokenIds.forEach((tokenId, index) => {
-    let id = tokenId.toString() + '-' + event.address.toHexString();
-    store.remove('ERC721StakedToken', id);
-  });
-
   common.incrementTransactionsCount('WITHDRAW');
+
+  let tokenIds: Array<BigInt> = event.params.tokenIds;
+  for (let i = 0; i < tokenIds.length; i++) {
+    let token: BigInt = tokenIds[i];
+
+    let id = token.toString() + '-' + event.address.toHexString();
+    store.remove('ERC721StakedToken', id);
+  }
 }
