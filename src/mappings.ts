@@ -12,6 +12,7 @@ import {handleDelegate, handleDelegatedPowerIncreased, handleDelegatedPowerDecre
 import {handleDeposit, handleWithdraw} from './kernel/deposits-withdrawals';
 import {handleLock} from './kernel/locks';
 import {handleTransfer} from "./token/transfers";
+import {handleClaim} from "./airdrop/claims";
 
 /**
  * GOVERNANCE
@@ -55,4 +56,11 @@ export {
 /** TOKEN */
 export {
     handleTransfer
+}
+
+/**
+ * Airdrop
+ */
+ export {
+    handleClaim,
 }

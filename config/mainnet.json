@@ -6,5 +6,6 @@
   "Governance": "0xCF25693D992b311A873aDe17b4b56ba79a49348a",
   "Kernel": "0xD2c83AB0bee469ab5853c1e60bf8B663094EDca5",
   "Token": "0xd779eea9936b4e323cddff2529eb6f13d0a4d66e",
-  "LandWorksDecentralandStaking": "0x36E59268239022702D88716f25fb462fa588Ea4d"
+  "LandWorksDecentralandStaking": "0x36E59268239022702D88716f25fb462fa588Ea4d",
+  "MerkleDistributor": "0x.."
 }

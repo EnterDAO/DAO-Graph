@@ -48,6 +48,8 @@ export namespace common {
             overview.voters = 0
             overview.kernelUsers = 0;
             overview.proposals = 0;
+            overview.totalAirdropClaimed = constants.BIGINT_ZERO;
+            overview.totalAirdropRedistributed = constants.BIGINT_ZERO;
             overview._sumLockTime = constants.BIGINT_ZERO;
             overview._numberOfLocks = constants.BIGINT_ZERO;
             overview._holdersWithNonZeroBalance = 0;

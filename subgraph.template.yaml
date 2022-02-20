@@ -144,3 +144,24 @@ dataSources:
         - event: Withdrawn(indexed address,uint256,uint256[])
           handler: handleWithdrawn
       file: ./src/staking/land-works/mapping.ts
+  - kind: ethereum/contract
+    name: MerkleDistributor
+    network: {{network}}
+    source:
+      address: "{{MerkleDistributor}}"
+      abi: MerkleDistributor
+      startBlock: {{startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Claim
+        - Overview
+      abis:
+        - name: MerkleDistributor
+          file: ./abis/MerkleDistributor.json
+      eventHandlers:
+        - event: Claimed(uint256,address,uint256,uint256)
+          handler: handleClaim
+      file: ./src/mappings.ts

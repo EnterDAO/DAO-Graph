@@ -8,7 +8,6 @@
     "deploy:mainnet": "CONFIG=$npm_config_config GRAPH=mainnet ./deploy.sh",
     "deploy:mainnet-remote": "CONFIG=$npm_config_config GRAPH=mainnet-remote ./deploy.sh",
     "deploy:mainnet-hosted": "CONFIG=$npm_config_config GRAPH=mainnet-hosted ./deploy.sh"
-
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.21.1",
