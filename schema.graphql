@@ -106,7 +106,7 @@ type Voter @entity {
   isKernelUser: Boolean!
   votingHistory: [Vote!]! @derivedFrom(field: "voter")
   "Used to efficiently query voters sorted by staked tokens"
-  _tokensStakedWithoutDecimals: Int!
+  _tokensStakedWithoutDecimals: BigInt!
 }
 
 type Vote @entity {
