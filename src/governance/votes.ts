@@ -25,7 +25,7 @@ export function handleVote(event: Vote): void {
         vote.proposal = vote.proposalId.toString(); // Map for deriveFrom
         vote.power = event.params.power;
         vote.abrogatedProposal = "";
-        vote._powerWithoutDecimals = (event.params.power.div(constants.TEN_TO_THE_EIGHTEEN)).toI32();
+        vote._powerWithoutDecimals = (event.params.power.div(constants.TEN_TO_THE_EIGHTEEN));
         proposal.votesCount += 1;
     } else {
         // User changed vote. We must remvoe previously accounted votes

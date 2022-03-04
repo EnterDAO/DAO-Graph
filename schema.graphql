@@ -106,7 +106,7 @@ type Voter @entity {
   isKernelUser: Boolean!
   votingHistory: [Vote!]! @derivedFrom(field: "voter")
   "Used to efficiently query voters sorted by staked tokens"
-  _tokensStakedWithoutDecimals: Int!
+  _tokensStakedWithoutDecimals: BigInt!
 }
 
 type Vote @entity {
@@ -119,7 +119,7 @@ type Vote @entity {
   power: BigInt!
   support: Boolean!
   "Used to efficiently votes by power"
-  _powerWithoutDecimals: Int!
+  _powerWithoutDecimals: BigInt!
   proposal: Proposal! # Used for derivedFrom
   abrogatedProposal: AbrogationProposal! # Used for derivedFrom
   voter: Voter! # Used for derivedFrom
@@ -139,6 +139,10 @@ type Overview @entity {
   kernelUsers: Int!
   "Count of all proposals that have been created"
   proposals: Int!
+  "The total amount of ENTR Tokens claimed"
+  totalAirdropClaimed: BigInt
+  "The total amount of ENTR Tokens redistributed"
+  totalAirdropRedistributed: BigInt!
   "Used to efficiently calculate avgLockTimeSeconds"
   _sumLockTime: BigInt!
   "Used to efficiently calculate avgLockTimeSeconds"
@@ -180,4 +184,18 @@ type ERC721StakedToken @entity {
   contract: Bytes!
   "Staked owner of the ERC-721"
   owner: Bytes!
+}
+
+type Claim @entity {
+  id: ID!
+  "Index of the claimer in the distribution json file"
+  claimerIndex: BigInt!
+  "Address of the claimer"
+  claimer: Bytes!
+  "The initial amount distributed to that user without bonus"
+  claimAmount: BigInt!
+  "The actual amount the user claimed including bonus"
+  adjustedAmount: BigInt!
+  "The amount redistributed to the bonus pool for early claim"
+  redistributedAmount: BigInt!
 }

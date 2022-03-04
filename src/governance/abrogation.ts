@@ -61,7 +61,7 @@ export function handleAbrogationProposalVote(event: AbrogationProposalVote): voi
         vote.abrogatedProposal = apId;
         vote.proposal = "";
         vote.proposalId = event.params.proposalId;
-        vote._powerWithoutDecimals = (event.params.power.div(constants.TEN_TO_THE_EIGHTEEN)).toI32();
+        vote._powerWithoutDecimals = (event.params.power.div(constants.TEN_TO_THE_EIGHTEEN));
         ap.votesCount += 1;
     } else {
         // User changed vote. We must remvoe previously accounted votes
