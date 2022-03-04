@@ -119,7 +119,7 @@ type Vote @entity {
   power: BigInt!
   support: Boolean!
   "Used to efficiently votes by power"
-  _powerWithoutDecimals: Int!
+  _powerWithoutDecimals: BigInt!
   proposal: Proposal! # Used for derivedFrom
   abrogatedProposal: AbrogationProposal! # Used for derivedFrom
   voter: Voter! # Used for derivedFrom
